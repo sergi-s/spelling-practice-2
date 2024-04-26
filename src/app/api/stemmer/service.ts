@@ -38,13 +38,15 @@ export const extractEnglishWords = async (phrase: string) => {
     // Filter out words that are not found but could be stemmed to English words
     const wordsNotFound = promiseResult
         .filter((promise) => promise.status === 'rejected')
-        .map((promise) => promise.reason as string);
+        .map((promise) => (promise as PromiseRejectedResult).reason as string);
 
     // Stem the words and look up their meanings
     const stemmedWords = wordsNotFound.map(word => stemText(word, natural.PorterStemmer));
     const englishWords2 = await lookupWords(stemmedWords);
 
     // Filter out successfully found English words from the original tokens
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
     const englishWords1 = await lookupWords(tokenized.filter((word, index) => promiseResult[index].status === 'fulfilled'));
 
     console.log([...englishWords1, ...englishWords2])
@@ -57,7 +59,7 @@ const lookupWords = async (words: string[]) => {
     const results = await Promise.allSettled(words.map((word) => lookupAsync(word)));
     return results
         .filter((promise) => promise.status === 'fulfilled')
-        .map((promise) => promise.value as string);
+        .map((promise) => (promise as PromiseFulfilledResult<string>).value);
 }
 
 

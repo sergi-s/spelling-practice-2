@@ -2,16 +2,28 @@ import { prisma } from "../prisma";
 import { extractEnglishWords, stem } from "../stemmer/service";
 import { generatedSentenceSchema } from "./validation";
 
-export async function generateSentence() {
-    const url = 'http://localhost:11434/api/generate';
-    const requestBody = {
-        model: 'gemma:2b',
-        prompt: 'Give me a very easy sentence to practice my spelling in double quotation marks, dont provide anything else',
-        stream: false
-    };
+const difficultyMap: Record<number, string> = {
+    1: 'very easy',
+    2: 'moderately easy',
+    3: 'medium',
+    4: 'moderately hard',
+    5: 'very hard'
+}
 
+const baseURL = 'http://localhost:11434/api/generate';
+
+export async function generateSentence() {
     try {
-        const LLMResponse = await fetch(url, {
+        const difficulty = Math.floor(Math.random() * 4) + 1;
+        const prompt = `Give me a ${difficultyMap[difficulty]} sentence to practice my spelling in double quotation marks, don't provide anything else`;
+
+        const requestBody = {
+            model: 'gemma:2b',
+            prompt,
+            stream: false
+        };
+
+        const response = await fetch(baseURL, {
             method: 'POST',
             body: JSON.stringify(requestBody),
             headers: {
@@ -19,60 +31,49 @@ export async function generateSentence() {
             }
         });
 
-        if (!LLMResponse.ok) {
-            throw new Error(`Failed to fetch. Status: ${LLMResponse.status}`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch. Status: ${response.status}`);
         }
 
-        const { response } = generatedSentenceSchema.parse(await LLMResponse.json())
-        if (!response) throw new Error(`No response`)
+        const { response: generatedResponse } = generatedSentenceSchema.parse(await response.json());
+        if (!generatedResponse) {
+            throw new Error('No response');
+        }
 
-        // the response contains string in a double quoted, extract it
-        const sentence = response.match(/"([^"]+)"/)[1];
+        const sentence = generatedResponse.match(/"([^"]+)"/)?.[1];
+        if (!sentence) {
+            return;
+        }
 
-        if (!sentence) return
+        const sentenceAlreadyExists = await prisma.phrase.findFirst({ where: { phrase: sentence } });
+        if (sentenceAlreadyExists) {
+            return;
+        }
 
-        console.log({ response, sentence });
-
-        const englishWords: string[] = await extractEnglishWords(sentence)
-
-        const sentenceP = await prisma.phrase.create({ data: { phrase: sentence } })
-
-        const wordIDs = []
+        const englishWords = await extractEnglishWords(sentence);
+        const wordIDs = [];
 
         for await (const word of englishWords) {
-            const stemmedWord = await stem(word, 'en')
+            const stemmedWord = await stem(word, 'en');
 
+            if (stemmedWord) {
+                let savedWord = await prisma.word.findUnique({ where: { stemmedWord } });
 
-            if (!stemmedWord) {
-                // word is useless
-                continue
+                if (!savedWord) {
+                    savedWord = await prisma.word.create({ data: { stemmedWord, representations: [word] } });
+                } else {
+                    await prisma.word.update({ where: { stemmedWord }, data: { representations: { push: word } } });
+                }
+
+                wordIDs.push(savedWord.id);
             }
-
-            let savedWord;
-
-            savedWord = await prisma.word.findUnique({ where: { stemmedWord } })
-
-            if (savedWord) {
-                await prisma.word.update({ where: { stemmedWord }, data: { representations: { push: word } } })
-            }
-            else {
-                savedWord = await prisma.word.create({ data: { stemmedWord, representations: [word] } })
-            }
-
-            wordIDs.push(savedWord.id)
-
         }
 
-        const savedPhrase = await prisma.phrase.update({ where: { id: sentenceP.id }, data: { wordIDs } })
+        const sentenceP = await prisma.phrase.create({ data: { phrase: sentence, wordIDs } });
 
-
-        console.log({ savedPhrase })
-        // Handle responseData
+        console.log({ sentence });
+        return sentenceP;
     } catch (error) {
         console.error('Error:', error);
     }
 }
-
-// void (async () => {
-//     await generateSentence()
-// })()
