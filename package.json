@@ -19,9 +19,10 @@
     "natural": "^7.0.0",
     "next": "^14.1.3",
     "next-auth": "^4.24.6",
+    "node-wordnet": "^0.1.12",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-speech": "^1.0.2",
+    "react-speech-kit": "^3.0.1",
     "wordnet-db": "^3.1.14",
     "zod": "^3.22.4"
   },
