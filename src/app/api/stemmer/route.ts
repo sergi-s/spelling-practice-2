@@ -1,7 +1,7 @@
 import type { NextApiRequest } from 'next'
 import { NextResponse } from 'next/server';
 import { schema } from './validation';
-import { extractEnglishWords, stem, stemText, stemmers } from './service';
+import { extractEnglishWords, stem } from './service';
 
 
 export const POST = async (

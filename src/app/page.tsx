@@ -2,6 +2,7 @@
 import { useState } from "react";
 // import Speech from 'react-speech';
 import { useSpeechSynthesis } from 'react-speech-kit';
+import { Spelling } from "./spelling";
  
 
 
@@ -58,7 +59,8 @@ export default function HomePage() {
           voice="Google UK English Male"
           text={text} /> */}
           {/* eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call */}
-          <button onClick={() => speak({ text })}>Speak</button>
+          {/* <button onClick={() => speak({ text })}>Speak</button> */}
+          <Spelling/>
       </div>
     </main>
   );

@@ -72,7 +72,7 @@ export async function generateSentence() {
         const sentenceP = await prisma.phrase.create({ data: { phrase: sentence, wordIDs } });
 
         console.log({ sentence });
-        return sentenceP;
+        return sentenceP.phrase;
     } catch (error) {
         console.error('Error:', error);
     }
