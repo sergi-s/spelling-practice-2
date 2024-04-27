@@ -2,10 +2,13 @@
 
 ## Overview
 A Next.js application for spelling practice (English for now), using TypeScript, Prisma, and MongoDB.
+Using an LLM (Gemma:2b with Ollama) to generate Phrases that ranges in difficulties.
 
 ## Requirements
 - Node.js
 - MongoDB
+- Prisma
+
 
 ## Installation
 1. Clone the repository.
@@ -19,6 +22,13 @@ A Next.js application for spelling practice (English for now), using TypeScript,
 - Visit the application in your browser.
 - Register or login.
 - Start practicing English spelling!
+
+## Current plan
+1- Some refactoring
+2- Make a better comparison between the input vs the sentence.phrase
+3- Add some styling
+4- control difficulties
+5- Another module for logged in users and do analysis (of words scores)
 
 ## Contributing
 Contributions welcome.
