@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useSpeechSynthesis } from 'react-speech-kit';
 
+
+// TODO: 1- Clean this shitting code
+// TODO: 2- Make some comparison between the input vs the sentence.phrase
+// TODO: 3- Add some styling
+
+// TODO: 4- another module for logged in users and do analysis
 export const Spelling = () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { speak } = useSpeechSynthesis();
