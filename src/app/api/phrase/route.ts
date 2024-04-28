@@ -11,7 +11,7 @@ const schema = z.object({
 export const POST = async (
     req: NextApiRequest,
 ) => {
-    const body = await req.json();
+    const body = await req.json() as unknown;
     const response = schema.safeParse(body);
 
     if (!response.success) {
@@ -44,7 +44,7 @@ async function getRandomphrasesNotInList(sentenceIds: string[], difficulty: numb
                 NOT: { id: { in: sentenceIds } },
             }
         });
-        return phrases[0]
+        return phrases[0] ?? { phrase: 'No phrases found'}
     } catch (error) {
         console.error('Error fetching random sentence:', error);
         throw error;

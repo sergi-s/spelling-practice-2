@@ -11,7 +11,7 @@ export const GET = async () => {
         for (let i = 0; i < 10; i++) {
             const additionalResponse = await generateSentence();
             // Write additional response to stream
-            await writer.write(encoder.encode(`${additionalResponse?.phrase}\n`));
+            await writer.write(encoder.encode(`${additionalResponse}\n`));
         }
     } catch (error) {
         console.error('An error occurred during stream generation', error);
