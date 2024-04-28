@@ -7,8 +7,8 @@ import { extractEnglishWords, stem } from './service';
 export const POST = async (
     req: NextApiRequest,
 ) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    const response = schema.safeParse(await req.json());
+    const body = await req.json();
+    const response = schema.safeParse(body);
 
     if (!response.success) {
         const { errors } = response.error;
@@ -20,15 +20,8 @@ export const POST = async (
 
     const { language, phrase } = response.data;
     const englishWords: string[] = await extractEnglishWords(phrase)
-    // const stemmer = stemmers[language]
-    // if (!stemmer) {
-    //     return NextResponse.json({
-    //         error: { message: "Invalid language" },
-    //     });
-    // }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    return NextResponse.json({ f: stem(englishWords.join(' '), language) })
+    return NextResponse.json(stem(englishWords.join(' '), language))
 
 }
 

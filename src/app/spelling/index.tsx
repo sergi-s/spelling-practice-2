@@ -9,11 +9,12 @@ import { useSpeechSynthesis } from 'react-speech-kit';
 
 // TODO: 4- another module for logged in users and do analysis
 export const Spelling = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { speak } = useSpeechSynthesis();
     const [sentence, setSentence] = useState<{ phrase: string, id: string }>();
     const [userInput, setUserInput] = useState<string>('');
     const [comparisonResult, setComparisonResult] = useState<boolean | null>(null);
+    const [difficulty, setDifficulty] = useState<number>(1); // Default difficulty level
+    const difficultyOptions = [1, 2, 3, 4, 5]; // Array of difficulty levels
 
     const fetchNewSentence = async () => {
         try {
@@ -24,7 +25,7 @@ export const Spelling = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ sentenceIds }),
+                body: JSON.stringify({ sentenceIds, difficulty }),
             });
             if (response.ok) {
                 const { phrase: newSentence, id } = await response.json() as { phrase: string, id: string };
@@ -58,7 +59,7 @@ export const Spelling = () => {
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, []);
+    }, [difficulty]);
 
     const handleButtonClick = () => {
         void fetchNewSentence();
@@ -77,6 +78,10 @@ export const Spelling = () => {
         }
     };
 
+    const handleDifficultyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setDifficulty(parseInt(event.target.value));
+    };
+
     return (
         <div>
             <h1>Generated Sentence</h1>
@@ -91,6 +96,14 @@ export const Spelling = () => {
             <button onClick={handleButtonClick}>Generate New Sentence</button>
             <br />
             <button id="thisIsAShitSolution" onClick={() => void speak({ text: sentence?.phrase })}>Read Again</button>
+            <div>
+                <label htmlFor="difficulty">Difficulty:</label>
+                <select id="difficulty" value={difficulty} onChange={handleDifficultyChange}>
+                    {difficultyOptions.map(option => (
+                        <option key={option} value={option}>{option}</option>
+                    ))}
+                </select>
+            </div>
         </div>
     );
 };

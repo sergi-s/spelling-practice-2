@@ -5,14 +5,14 @@ import { prisma } from '../prisma';
 
 const schema = z.object({
     sentenceIds: z.string().array(),
+    difficulty: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]).optional(),
 })
 
 export const POST = async (
     req: NextApiRequest,
 ) => {
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    const response = schema.safeParse(await req.json());
+    const body = await req.json();
+    const response = schema.safeParse(body);
 
     if (!response.success) {
         const { errors } = response.error;
@@ -22,15 +22,16 @@ export const POST = async (
         });
     }
 
-    return NextResponse.json(await getRandomphrasesNotInList(response.data.sentenceIds))
+    return NextResponse.json(await getRandomphrasesNotInList(response.data.sentenceIds, response.data.difficulty))
 
 }
 
 
-async function getRandomphrasesNotInList(sentenceIds: string[]) {
+async function getRandomphrasesNotInList(sentenceIds: string[], difficulty: number | undefined) {
     try {
         const phrasesCount = await prisma.phrase.count({
             where: {
+                difficulty,
                 NOT: { id: { in: sentenceIds } },
             },
         });
@@ -39,6 +40,7 @@ async function getRandomphrasesNotInList(sentenceIds: string[]) {
             take: 1,
             skip: skip,
             where: {
+                difficulty,
                 NOT: { id: { in: sentenceIds } },
             }
         });

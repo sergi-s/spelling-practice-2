@@ -69,7 +69,7 @@ export async function generateSentence() {
             }
         }
 
-        const sentenceP = await prisma.phrase.create({ data: { phrase: sentence, wordIDs } });
+        const sentenceP = await prisma.phrase.create({ data: { phrase: sentence, difficulty, wordIDs } });
 
         console.log({ sentence });
         return sentenceP.phrase;

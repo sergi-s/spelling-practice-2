@@ -47,12 +47,13 @@ model Word {
 }
 
 model Phrase {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    phrase    String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    wordIDs   String[] @db.ObjectId
-    posts     Word[]   @relation(fields: [wordIDs], references: [id])
+    id         String   @id @default(auto()) @map("_id") @db.ObjectId
+    phrase     String
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+    wordIDs    String[] @db.ObjectId
+    difficulty Int?
+    posts      Word[]   @relation(fields: [wordIDs], references: [id])
 }
 
 model UserWord {
