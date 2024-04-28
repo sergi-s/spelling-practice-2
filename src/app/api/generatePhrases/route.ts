@@ -9,16 +9,18 @@ export const GET = async () => {
     try {
         // Generate additional responses asynchronously
         for (let i = 0; i < 10; i++) {
+            console.log("Generating sentence")
             const additionalResponse = await generateSentence();
             // Write additional response to stream
-            await writer.write(encoder.encode(`${additionalResponse?.phrase}\n`));
+            writer.write(encoder.encode(`${additionalResponse}\n`));
         }
     } catch (error) {
         console.error('An error occurred during stream generation', error);
-        await writer.write(encoder.encode('An error occurred during stream generation'));
+        writer.write(encoder.encode('An error occurred during stream generation'));
     } finally {
+        console.log("FInnally")
         // Close the writer
-        await writer.close();
+        writer.close();
     }
 
     // Return response with appropriate headers
@@ -33,3 +35,7 @@ export const GET = async () => {
         },
     });
 };
+
+export const config = {
+    runtime: "edge"
+}

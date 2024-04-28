@@ -47,7 +47,7 @@ export async function generateSentence() {
 
         const sentenceAlreadyExists = await prisma.phrase.findFirst({ where: { phrase: sentence } });
         if (sentenceAlreadyExists) {
-            return;
+            return await generateSentence();
         }
 
         const englishWords = await extractEnglishWords(sentence);
