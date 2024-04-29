@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-export const useKeyboardShortcuts = (fetchNewSentence: Function,setCheckSpelling:Function, difficulty?: number) => {
+export const useKeyboardShortcuts = (fetchNewSentence: Function, setCheckSpelling: Function, difficulty?: number) => {
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.code === 'Digit1') {

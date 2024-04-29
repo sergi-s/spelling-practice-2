@@ -9,9 +9,9 @@ export const DifficultySelect: React.FC<{ difficulty: number | undefined, onChan
     };
 
     return (
-        <div>
+        <div className="col-span-2">
             <label htmlFor="difficulty">Difficulty:</label>
-            <select id="difficulty" value={difficulty} onChange={handleDifficultyChange}>
+            <select style={{ color: "black" }} id="difficulty" value={difficulty} onChange={handleDifficultyChange}>
                 {difficultyOptions.map(option => (
                     <option key={option} value={option}>{option}</option>
                 ))}

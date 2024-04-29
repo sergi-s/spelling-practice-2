@@ -10,7 +10,7 @@ const difficultyMap: Record<number, string> = {
     5: 'very hard'
 }
 
-const baseURL = 'http://localhost:11434/api/generate';
+const baseURL = 'http://192.168.2.237:11434/api/generate';
 
 export async function generateSentence() {
     try {
