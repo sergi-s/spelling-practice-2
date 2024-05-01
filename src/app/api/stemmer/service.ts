@@ -49,7 +49,7 @@ export const extractEnglishWords = async (phrase: string) => {
     //@ts-ignore
     const englishWords1 = await lookupWords(tokenized.filter((word, index) => promiseResult[index].status === 'fulfilled'));
 
-    console.log([...englishWords1, ...englishWords2])
+    // console.log([...englishWords1, ...englishWords2])
     // Merge the results and return
     return [...englishWords1, ...englishWords2];
 }

@@ -1,41 +1,22 @@
-import { generateSentence } from "./generateGemma:2b";
+import { NextResponse } from "next/server";
+import { GemmaChatSentenceStrategy } from "../phrase/phrase.generation.strategies/gemma.2b.chat";
+import { generateSentence } from "./../phrase/phrase.generation.strategies";
+import { saveGeneratedPhrase } from "../phrase/phrase.service";
+import { Language } from "../stemmer/validation";
 
 export const GET = async () => {
-    // Initialize response stream
-    const responseStream = new TransformStream();
-    const writer = responseStream.writable.getWriter();
-    const encoder = new TextEncoder();
+    const difficulty = Math.floor(Math.random() * 4) + 1;
+    const language = Language.en;
 
-    try {
-        // Generate additional responses asynchronously
-        for (let i = 0; i < 10; i++) {
-            console.log("Generating sentence")
-            const additionalResponse = await generateSentence();
-            // Write additional response to stream
-            writer.write(encoder.encode(`${additionalResponse}\n`));
-        }
-    } catch (error) {
-        console.error('An error occurred during stream generation', error);
-        writer.write(encoder.encode('An error occurred during stream generation'));
-    } finally {
-        console.log("FInnally")
-        // Close the writer
-        writer.close();
-    }
+    console.log('Generating phrase with difficulty:', difficulty, 'and language:', language);
 
-    // Return response with appropriate headers
-    return new Response(responseStream.readable, {
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "text/event-stream; charset=utf-8",
-            Connection: "keep-alive",
-            "Cache-Control": "no-cache, no-transform",
-            "X-Accel-Buffering": "no",
-            "Content-Encoding": "none",
-        },
-    });
-};
+    const phrase = await generateSentence(GemmaChatSentenceStrategy, difficulty, language);
+    if (!phrase) return NextResponse.json({
+        error: "An error occurred during phrase generation"
+    })
+    const savedPhrase = await saveGeneratedPhrase(difficulty, language, phrase);
 
-export const config = {
-    runtime: "edge"
+    return NextResponse.json({
+        phrase: savedPhrase
+    })
 }

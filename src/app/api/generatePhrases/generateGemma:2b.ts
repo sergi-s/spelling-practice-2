@@ -1,16 +1,9 @@
 import { prisma } from "../prisma";
 import { extractEnglishWords, stem } from "../stemmer/service";
-import { generatedSentenceSchema } from "./validation";
+import { Language, difficultyMap } from "../stemmer/validation";
+import { generatedChatSentenceSchema } from "./validation";
 
-const difficultyMap: Record<number, string> = {
-    1: 'very easy',
-    2: 'moderately easy',
-    3: 'medium',
-    4: 'moderately hard',
-    5: 'very hard'
-}
-
-const baseURL = 'http://192.168.2.237:11434/api/generate';
+const baseURL = 'http://192.168.2.237:11434/api/chat';
 
 export async function generateSentence() {
     try {
@@ -18,10 +11,23 @@ export async function generateSentence() {
         const prompt = `Give me a ${difficultyMap[difficulty]} sentence to practice my spelling in double quotation marks, don't provide anything else`;
 
         const requestBody = {
-            model: 'gemma:2b',
-            prompt,
-            stream: false
-        };
+            "model": "gemma:2b",
+            "stream": false,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "Give a sentence to practice my spelling in double quotation marks, don't provide anything else"
+                },
+                {
+                    "role": "user",
+                    "content": `The provided sentence difficulty should be ${difficultyMap[difficulty]}`
+                },
+                {
+                    "role": "user",
+                    "content": "The provided sentence difficulty should be maximum 5 words"
+                }
+            ]
+        }
 
         const response = await fetch(baseURL, {
             method: 'POST',
@@ -35,7 +41,7 @@ export async function generateSentence() {
             throw new Error(`Failed to fetch. Status: ${response.status}`);
         }
 
-        const { response: generatedResponse } = generatedSentenceSchema.parse(await response.json());
+        const { message: { content: generatedResponse } } = generatedChatSentenceSchema.parse(await response.json());
         if (!generatedResponse) {
             throw new Error('No response');
         }
@@ -77,3 +83,4 @@ export async function generateSentence() {
         console.error('Error:', error);
     }
 }
+
