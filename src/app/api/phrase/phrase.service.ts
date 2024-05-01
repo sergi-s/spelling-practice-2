@@ -33,8 +33,7 @@ export async function saveGeneratedPhrase(difficulty: number, language: Language
         console.log('Saving generated sentence:', phrase);
         const sentenceAlreadyExists = await prisma.phrase.findFirst({ where: { phrase } });
         if (sentenceAlreadyExists) {
-            console.log('Sentence already exists:', sentenceAlreadyExists);
-            return sentenceAlreadyExists.phrase;
+            return sentenceAlreadyExists;
         }
 
         const englishWords = await extractEnglishWords(phrase);
@@ -57,9 +56,8 @@ export async function saveGeneratedPhrase(difficulty: number, language: Language
         }
 
         const sentenceP = await prisma.phrase.create({ data: { phrase, difficulty, wordIDs } });
-        console.log("Saved sentence:", sentenceP);
 
-        return sentenceP.phrase;
+        return sentenceP;
     } catch (error) {
         console.error('Error:', error);
     }

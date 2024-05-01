@@ -15,9 +15,3 @@ export const SpellingComparison = ({ correctPhrase, userPhrase, missSpelledWords
         </div>
     );
 };
-
-
-// TODO: 1- More cleaning 
-// TODO: 3- Add some styling
-
-// TODO: 4- another module for logged in users and do analysis

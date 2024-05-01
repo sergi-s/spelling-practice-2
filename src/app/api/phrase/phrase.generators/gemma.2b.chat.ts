@@ -1,6 +1,6 @@
 import { type SentenceGenerationStrategy } from ".";
-import { generatedChatSentenceSchema } from "../../generatePhrases/validation";
 import { type Language, difficultyMap } from "../../stemmer/validation";
+import { generatedChatSentenceSchema } from "../phrase.validation";
 
 
 const baseURL = 'http://192.168.2.237:11434/api/chat';
@@ -41,7 +41,7 @@ export class GemmaChatSentenceStrategy implements SentenceGenerationStrategy {
                             + "The provided sentence should be a complex sentence with a variety of grammatical "
                             + "structures and vocabulary words, ALSO very important The provided sentence difficulty should be "
                             + difficultyMap[difficulty] + " also, The provided sentence difficulty should be maximum 5 words "
-                            // + "to prevent repeating sentences use this as a seed " + generateRandomLong().toString()
+                        // + "to prevent repeating sentences use this as a seed " + generateRandomLong().toString()
 
                     }
                 ]
@@ -72,8 +72,6 @@ export class GemmaChatSentenceStrategy implements SentenceGenerationStrategy {
     }
 }
 
-
-
 function generateRandomLong(): number {
     const MAX_INT32 = 0xFFFFFFFF;
     const MAX_INT32_DIV_100 = MAX_INT32 / 100;
@@ -85,4 +83,3 @@ function generateRandomLong(): number {
 
     return randomLong;
 }
-
