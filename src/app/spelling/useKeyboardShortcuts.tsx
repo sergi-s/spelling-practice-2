@@ -1,24 +1,35 @@
+import IconButton from 'components/IconButton';
 import { useEffect } from 'react';
+import { FaRedo } from 'react-icons/fa';
+import { useSpeechSynthesis } from 'react-speech-kit';
 
-export const useKeyboardShortcuts = (fetchNewSentence: Function, setCheckSpelling: Function, difficulty?: number) => {
+export const registerShortcut = (shortcut: string[], action: Function, ...params) => {
     useEffect(() => {
+
         const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.code === 'Digit1') {
+            console.log({ wtf: event.key })
+            if (shortcut.includes(event.key)) {
                 event.preventDefault();
-                const button = document.getElementById('thisIsAShitSolution');
-                if (button) {
-                    button.click();
-                }
-            }
-            if (event.code === 'Digit2') {
-                event.preventDefault();
-                fetchNewSentence(difficulty);
-                setCheckSpelling(false)
+                console.log("An actions should get triggered")
+                action(...params);
             }
         };
+
+
         document.addEventListener('keydown', handleKeyDown);
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, [fetchNewSentence]);
+    }, [...params]);
 };
+
+
+export const SpeakButton = ({ text }: { text?: string }): React.ReactNode => {
+    if (!text) text = "sorry there is no available text"
+    const { speak } = useSpeechSynthesis();
+    return <IconButton id="thisIsAShitSolution" onClick={() => void speak({ text })} color="blue">
+        Read Again
+        <FaRedo className="text-white" />
+    </IconButton>
+
+}

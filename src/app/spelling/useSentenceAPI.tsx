@@ -10,7 +10,7 @@ export const useSentenceAPI = () => {
     const fetchNewSentence = async (difficulty?: number) => {
         try {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const sentenceIds: string[] = JSON.parse(localStorage.getItem('sentenceIds')) || [];
+            const sentenceIds: string[] = JSON.parse(localStorage.getItem('sentenceIds') ?? '[]');
             const response = await fetch(`/api/phrase/`, {
                 method: 'POST',
                 headers: {
@@ -21,8 +21,6 @@ export const useSentenceAPI = () => {
             if (response.ok) {
                 const { phrase: newSentence, id } = await response.json() as { phrase: string, id: string };
                 setSentence({ phrase: newSentence, id });
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                speak({ text: newSentence });
             } else {
                 console.error('Failed to fetch new sentence');
             }
