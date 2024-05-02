@@ -12,37 +12,13 @@ export class GemmaChatSentenceStrategy implements SentenceGenerationStrategy {
                 "model": "gemma:2b",
                 "stream": false,
                 "messages": [
-                    // {
-                    //     "role": "user",
-                    //     "content": "Give a sentence to practice my spelling in double quotation marks, don't provide anything else"
-                    // },
-                    // {
-                    //     "role": "user",
-                    //     "content": `The provided sentence difficulty should be ${difficultyMap[difficulty]}`
-                    // },
-                    // {
-                    //     "role": "user",
-                    //     "content": "The provided sentence difficulty should be maximum 5 words"
-                    // }
-                    // // ,
-                    // // {
-                    // //     "role": "user",
-                    // //     "content": `The provided sentence difficulty should in ${language}`
-                    // // },
-                    // ,
-                    // {
-                    //     "role": "user",
-                    //     "content": `to prevent repeating sentences use this as a seed ${generateRandomLong()}`
-                    // }
                     {
                         "role": "user",
-                        "content":
-                            "Give a sentence to practice my spelling in double quotation marks, "
-                            + "The provided sentence should be a complex sentence with a variety of grammatical "
-                            + "structures and vocabulary words, ALSO very important The provided sentence difficulty should be "
-                            + difficultyMap[difficulty] + " also, The provided sentence difficulty should be maximum 5 words "
-                        // + "to prevent repeating sentences use this as a seed " + generateRandomLong().toString()
-
+                        "content": `Give me a very short sentence to practice my spelling in double quotation marks, don't provide anything else, to prevent repeating sentences use this as a seed ${generateRandomLong()}`
+                    },
+                    {
+                        "role": "user",
+                        "content": `The sentence difficulty should be from ${difficulty}/5`
                     }
                 ]
             }
