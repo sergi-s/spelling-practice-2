@@ -1,16 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useSpeechSynthesis } from 'react-speech-kit';
 
 export const useSentenceAPI = () => {
-    const { speak } = useSpeechSynthesis();
 
     const [sentence, setSentence] = useState<{ phrase: string, id: string }>();
 
 
     const fetchNewSentence = async (difficulty?: number) => {
         try {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const sentenceIds: string[] = JSON.parse(localStorage.getItem('sentenceIds') ?? '[]');
+            const sentenceIds: string[] = JSON.parse(localStorage.getItem('sentenceIds') ?? '[]') as string[];
             const response = await fetch(`/api/phrase/`, {
                 method: 'POST',
                 headers: {
@@ -19,7 +16,9 @@ export const useSentenceAPI = () => {
                 body: JSON.stringify({ sentenceIds, difficulty }),
             });
             if (response.ok) {
+                console.log({ oldSentence: sentence })
                 const { phrase: newSentence, id } = await response.json() as { phrase: string, id: string };
+                console.log({ newSentence })
                 setSentence({ phrase: newSentence, id });
             } else {
                 console.error('Failed to fetch new sentence');

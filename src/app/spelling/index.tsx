@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useSentenceAPI } from './useSentenceAPI';
-import { SpeakButton, registerShortcut } from './useKeyboardShortcuts';
+import { SpeakButton, registerShortcut, speak } from './useKeyboardShortcuts';
 import { DifficultySelect } from './DifficultySelect';
 import { SpellingComparison } from './SpellingComparison';
 import { RiArrowRightSLine } from 'react-icons/ri';
 import IconButton from 'components/IconButton';
+import { ShortcutInstructions } from 'components/ShortcutInstructions';
 
 export const Spelling = () => {
     const { sentence, fetchNewSentence } = useSentenceAPI();
@@ -14,15 +15,13 @@ export const Spelling = () => {
 
     const [checkSpelling, setCheckSpelling] = useState<boolean>(false);
 
-    registerShortcut(['Digit1', '1'], () => {
-        const button = document.getElementById('thisIsAShitSolution');
-        if (button) button.click();
-    });
+    registerShortcut(['Digit1', '1'], speak);
 
     registerShortcut(['Digit2', '2'], async function () {
         await fetchNewSentence(difficulty);
         setCheckSpelling(false)
         setUserInput('')
+        setTimeout(() => { speak() }, 0);
     })
 
     const handleButtonClick = () => {
@@ -30,18 +29,16 @@ export const Spelling = () => {
         setUserInput('')
     };
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>): undefined => {
         setUserInput(event.target.value);
     };
 
-    const handleInputSubmit = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleInputSubmit = (event: React.KeyboardEvent<HTMLInputElement>): undefined => {
         if (event.key !== 'Enter') return;
         setCheckSpelling(true);
 
         const correctPhrase = (sentence?.phrase ?? '').replace(/[^a-zA-Z\s]/g, ' ').toLowerCase().split(' ');
         const userPhrase = userInput.replace(/[^a-zA-Z\s]/g, ' ').replace(/\s{2,}/g, ' ').toLowerCase().split(' ');
-
-        console.log({ correctPhrase, userPhrase });
 
         const missSpelledWords = correctPhrase.filter((word, index) => word !== userPhrase[index]);
         const isCorrect = missSpelledWords.length === 0;
@@ -54,6 +51,9 @@ export const Spelling = () => {
 
     return (
         <div className="flex min-h-screen flex-col items-center justify-center">
+
+            <ShortcutInstructions />
+
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8 max-w-lg">
                 <h1 className="col-span-2 text-center">Generated Sentence</h1>
 
@@ -89,9 +89,6 @@ export const Spelling = () => {
 
 
 
-// TODO: 1- Some UI for instructions
-// TODO: when pressing 2 / generating a new sentence, clear the text filed, and try to stop the speech if possible
-// TODO: 2- test and flush out the bugs
 // TODO: 3- Auth module, and tracking what words are spelled incorrectly by the user
 
 // TODO; 4- add an array of topics to the LLM to introduce more randomness and relevancy in generating sentences to be dictated 

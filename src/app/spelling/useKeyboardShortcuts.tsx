@@ -7,14 +7,11 @@ export const registerShortcut = (shortcut: string[], action: Function, ...params
     useEffect(() => {
 
         const handleKeyDown = (event: KeyboardEvent) => {
-            console.log({ wtf: event.key })
             if (shortcut.includes(event.key)) {
                 event.preventDefault();
-                console.log("An actions should get triggered")
                 action(...params);
             }
         };
-
 
         document.addEventListener('keydown', handleKeyDown);
         return () => {
@@ -26,10 +23,15 @@ export const registerShortcut = (shortcut: string[], action: Function, ...params
 
 export const SpeakButton = ({ text }: { text?: string }): React.ReactNode => {
     if (!text) text = "sorry there is no available text"
-    const { speak } = useSpeechSynthesis();
-    return <IconButton id="thisIsAShitSolution" onClick={() => void speak({ text })} color="blue">
+    const { speak, cancel } = useSpeechSynthesis();
+    return <IconButton id="thisIsAShitSolution" onClick={() => { void cancel(); void speak({ text }) }} color="blue">
         Read Again
         <FaRedo className="text-white" />
     </IconButton>
 
+}
+
+export const speak = () => {
+    const button = document.getElementById('thisIsAShitSolution');
+    if (button) button.click();
 }
