@@ -93,3 +93,5 @@ export const Spelling = () => {
 // TODO: when pressing 2 / generating a new sentence, clear the text filed, and try to stop the speech if possible
 // TODO: 2- test and flush out the bugs
 // TODO: 3- Auth module, and tracking what words are spelled incorrectly by the user
+
+// TODO; 4- add an array of topics to the LLM to introduce more randomness and relevancy in generating sentences to be dictated 
