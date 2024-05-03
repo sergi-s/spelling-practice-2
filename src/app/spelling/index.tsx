@@ -88,7 +88,10 @@ export const Spelling = () => {
 };
 
 
+// TODO: 1- Add french
 
-// TODO: 3- Auth module, and tracking what words are spelled incorrectly by the user
+// TODO: 2- Auth module, and tracking what words are spelled incorrectly by the user
 
-// TODO; 4- add an array of topics to the LLM to introduce more randomness and relevancy in generating sentences to be dictated 
+// TODO; 3- Add an array of topics to the LLM to introduce more randomness and relevancy in generating sentences to be dictated 
+
+// TODO: 4- ReWrite the sentence generator
