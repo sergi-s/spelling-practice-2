@@ -3,7 +3,7 @@ import { prisma } from '../prisma';
 import { extractEnglishWords, stem } from '../stemmer/service';
 import { type Language } from '../stemmer/validation';
 
-export async function getRandomPhrasesNotInList(sentenceIds: string[], difficulty: number | undefined) {
+export async function getRandomPhrasesNotInList(sentenceIds: string[], difficulty: number | undefined, topic?: string) {
     try {
         const phrasesCount = await prisma.phrase.count({
             where: {
@@ -28,7 +28,7 @@ export async function getRandomPhrasesNotInList(sentenceIds: string[], difficult
 }
 
 
-export async function saveGeneratedPhrase(difficulty: number, language: Language, phrase: string) {
+export async function saveGeneratedPhrase(difficulty: number, language: Language, phrase: string, topic: string) {
     try {
         console.log('Saving generated sentence:', phrase);
         const sentenceAlreadyExists = await prisma.phrase.findFirst({ where: { phrase } });
@@ -55,7 +55,16 @@ export async function saveGeneratedPhrase(difficulty: number, language: Language
             }
         }
 
-        const sentenceP = await prisma.phrase.create({ data: { phrase, difficulty, wordIDs } });
+        const sentenceP = await prisma.phrase.create({
+            data: {
+                phrase, difficulty, wordIDs, topic: {
+                    connectOrCreate: {
+                        where: { topic }, // Replace `topicId` with the actual ID of the topic you want to connect to
+                        create: { topic } // Replace "New Topic" with the actual topic name you want to create
+                    }
+                }
+            }
+        });
 
         return sentenceP;
     } catch (error) {

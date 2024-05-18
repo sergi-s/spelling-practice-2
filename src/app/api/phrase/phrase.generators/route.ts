@@ -3,7 +3,7 @@ import { saveGeneratedPhrase } from "../phrase.service";
 import { Language } from "../../stemmer/validation";
 import { llama3SentenceStrategy } from "./llama3-70b-8192";
 import { GemmaChatSentenceStrategy } from "./gemma.2b.chat";
-import { topics } from "./constants";
+import { prisma } from "../../prisma";
 
 interface Notify {
     log: (message: string) => void;
@@ -20,6 +20,9 @@ export function getRandomElement(array: string[]) {
 
 
 const generateAndSaveSentence = async (n = 1, notify: Notify) => {
+    const topics = await prisma.topic.findMany().then((topcis) => {
+        return topcis.map(t => t.topic)
+    }) as string[]
     for (let i = 0; i < n; i++) {
 
         const difficulty = Math.floor(Math.random() * 4) + 1;
@@ -31,7 +34,7 @@ const generateAndSaveSentence = async (n = 1, notify: Notify) => {
 
         const phrase = await generateSentence(llama3SentenceStrategy, difficulty, language, topic);
         if (!phrase) return notify.log("No sentence generated")
-        const savedPhrase = await saveGeneratedPhrase(difficulty, language, phrase);
+        const savedPhrase = await saveGeneratedPhrase(difficulty, language, phrase, topic ?? "");
         if (!savedPhrase) return notify.log("The sentence was not saved")
         notify.log(`Sentence ${i + 1}, difficulty level:${difficulty}/5, topic:${topic}: ${savedPhrase.phrase}`);
     }
@@ -40,7 +43,7 @@ const generateAndSaveSentence = async (n = 1, notify: Notify) => {
 
 export const GET = async () => {
 
-    const n = 50;
+    const n = 1;
     const responseStream = new TransformStream();
     const writer = responseStream.writable.getWriter();
     const encoder = new TextEncoder();
