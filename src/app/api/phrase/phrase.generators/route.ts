@@ -1,7 +1,9 @@
-import { GemmaChatSentenceStrategy } from "./gemma.2b.chat";
 import { generateSentence } from ".";
 import { saveGeneratedPhrase } from "../phrase.service";
 import { Language } from "../../stemmer/validation";
+import { llama3SentenceStrategy } from "./llama3-70b-8192";
+import { GemmaChatSentenceStrategy } from "./gemma.2b.chat";
+import { topics } from "./constants";
 
 interface Notify {
     log: (message: string) => void;
@@ -11,17 +13,27 @@ interface Notify {
     close: () => void;
 }
 
+
+export function getRandomElement(array: string[]) {
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+
 const generateAndSaveSentence = async (n = 1, notify: Notify) => {
     for (let i = 0; i < n; i++) {
 
         const difficulty = Math.floor(Math.random() * 4) + 1;
         const language = Language.en;
+        const topic = getRandomElement(topics)
 
-        const phrase = await generateSentence(GemmaChatSentenceStrategy, difficulty, language);
+
+        // const phrase = await generateSentence(GemmaChatSentenceStrategy, difficulty, language);
+
+        const phrase = await generateSentence(llama3SentenceStrategy, difficulty, language, topic);
         if (!phrase) return notify.log("No sentence generated")
         const savedPhrase = await saveGeneratedPhrase(difficulty, language, phrase);
         if (!savedPhrase) return notify.log("The sentence was not saved")
-        notify.log(`Sentence ${i + 1}: ${savedPhrase.phrase}`);
+        notify.log(`Sentence ${i + 1}, difficulty level:${difficulty}/5, topic:${topic}: ${savedPhrase.phrase}`);
     }
     notify.complete("done all processes");
 }
@@ -84,3 +96,5 @@ export const GET = async () => {
 export const config = {
     runtime: "edge",
 };
+
+

@@ -5,15 +5,18 @@ export const useSentenceAPI = () => {
     const [sentence, setSentence] = useState<{ phrase: string, id: string }>();
 
 
-    const fetchNewSentence = async (difficulty?: number) => {
+    const fetchNewSentence = async (difficulty?: number, topic?: string) => {
         try {
             const sentenceIds: string[] = JSON.parse(localStorage.getItem('sentenceIds') ?? '[]') as string[];
+            console.log("==================")
+            console.log({ topic })
+            console.log("==================")
             const response = await fetch(`/api/phrase/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ sentenceIds, difficulty }),
+                body: JSON.stringify({ sentenceIds, difficulty, topic }),
             });
             if (response.ok) {
                 console.log({ oldSentence: sentence })
