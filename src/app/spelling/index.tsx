@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSentenceAPI } from './useSentenceAPI';
 import { SpeakButton, registerShortcut, speak } from './useKeyboardShortcuts';
 import { DifficultySelect } from './DifficultySelect';
@@ -6,6 +6,8 @@ import { SpellingComparison } from './SpellingComparison';
 import { RiArrowRightSLine } from 'react-icons/ri';
 import IconButton from 'components/IconButton';
 import { ShortcutInstructions } from 'components/ShortcutInstructions';
+import CreatableSelect from 'react-select/creatable';
+
 
 export const Spelling = () => {
     const { sentence, fetchNewSentence } = useSentenceAPI();
@@ -15,17 +17,46 @@ export const Spelling = () => {
 
     const [checkSpelling, setCheckSpelling] = useState<boolean>(false);
 
+    const [options, setOptions] = useState<Array<{ value: string, label: string }>>([]);
+    const [selectedOption, setSelectedOption] = useState<{ value: string, label: string }>(undefined);
+
+    useEffect(() => {
+        const fetchTopics = async () => {
+            try {
+                const uniqueTopics = await (await fetch('/api/topics')).json();
+                const topics: { value: string, label: string }[] = uniqueTopics.map((topic: string) => ({ value: topic, label: topic }));
+                setOptions(topics);
+            } catch (error) {
+                console.error('Error fetching topics:', error);
+            }
+        };
+
+        fetchTopics();
+    }, []);
+
+
+    const handleChange = (selectedOption: { value: string, label: string }) => {
+        console.log("the new selected option is ", selectedOption)
+        setSelectedOption(selectedOption);
+    };
+    const handleCreate = (inputValue: string) => {
+        const newOption = { value: inputValue.toLowerCase(), label: inputValue };
+        setOptions(prevOptions => [...prevOptions, newOption]);
+        setSelectedOption(newOption);
+    };
+
     registerShortcut(['Digit1', '1'], speak);
 
-    registerShortcut(['Digit2', '2'], async function () {
-        await fetchNewSentence(difficulty);
+    registerShortcut(['Digit2', '2'], async function (localDifficulty, localSelectedOption) {
+        // console.log({selectedOption})
+        await fetchNewSentence(localDifficulty, localSelectedOption.value);
         setCheckSpelling(false)
         setUserInput('')
         setTimeout(() => { speak() }, 0);
-    })
+    },difficulty,selectedOption)
 
     const handleButtonClick = () => {
-        void fetchNewSentence(difficulty);
+        void fetchNewSentence(difficulty, selectedOption.value);
         setUserInput('')
     };
 
@@ -53,6 +84,16 @@ export const Spelling = () => {
         <div className="flex min-h-screen flex-col items-center justify-center">
 
             <ShortcutInstructions />
+            <div className="container">
+                <CreatableSelect
+                    options={options}
+                    value={selectedOption}
+                    onChange={handleChange}
+                    onCreateOption={handleCreate}
+                    placeholder="Search and select or create a topic..."
+                />
+                {selectedOption && <div>You selected: {selectedOption.label}</div>}
+            </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8 max-w-lg">
                 <h1 className="col-span-2 text-center">Generated Sentence</h1>

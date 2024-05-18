@@ -1,5 +1,5 @@
 import { type SentenceGenerationStrategy } from ".";
-import { type Language, difficultyMap } from "../../stemmer/validation";
+import { type Language } from "../../stemmer/validation";
 import { generatedChatSentenceSchema } from "../phrase.validation";
 
 
@@ -40,7 +40,7 @@ export class GemmaChatSentenceStrategy implements SentenceGenerationStrategy {
             if (!generatedResponse) {
                 throw new Error('No response');
             }
-            return generatedResponse
+            return generatedResponse.match(/"([^"]+)"/)?.[1];
 
         } catch (error) {
             console.error('Error:', error);
