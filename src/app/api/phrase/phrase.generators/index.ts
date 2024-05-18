@@ -1,5 +1,4 @@
 import { Language } from "../../stemmer/validation";
-import { topics } from "./constants";
 import { getRandomElement } from "./route";
 
 

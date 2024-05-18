@@ -6,6 +6,8 @@ export const useSentenceAPI = () => {
 
 
     const fetchNewSentence = async (difficulty?: number, topic?: string) => {
+        
+        // TODO: get array of misspelled words
         try {
             const sentenceIds: string[] = JSON.parse(localStorage.getItem('sentenceIds') ?? '[]') as string[];
             console.log("==================")
@@ -16,7 +18,7 @@ export const useSentenceAPI = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ sentenceIds, difficulty, topic }),
+                body: JSON.stringify({ sentenceIds, difficulty, topic, /**misspelled words */ }),
             });
             if (response.ok) {
                 console.log({ oldSentence: sentence })

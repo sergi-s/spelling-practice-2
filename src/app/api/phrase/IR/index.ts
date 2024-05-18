@@ -60,3 +60,6 @@ void (async function () {
     console.log(`Most similar string in the corpus: score (${maxSimilarity}) \n ${newString} <=VS=>\n ${mostSimilar}`)
 
 })()
+
+//TODO, stem the corps first, compare the new generated sentence with the stemmed corps
+// if the difference is less than 3 words (generate a new sentence) 
