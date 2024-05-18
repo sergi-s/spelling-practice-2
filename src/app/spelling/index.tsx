@@ -47,13 +47,12 @@ export const Spelling = () => {
 
     registerShortcut(['Digit1', '1'], speak);
 
-    registerShortcut(['Digit2', '2'], async function (localDifficulty, localSelectedOption) {
-        // console.log({selectedOption})
+    registerShortcut(['Digit2', '2'], async function (localDifficulty: number, localSelectedOption: { value: string, label: string }) {
         await fetchNewSentence(localDifficulty, localSelectedOption.value);
         setCheckSpelling(false)
         setUserInput('')
         setTimeout(() => { speak() }, 0);
-    },difficulty,selectedOption)
+    }, difficulty, selectedOption)
 
     const handleButtonClick = () => {
         void fetchNewSentence(difficulty, selectedOption.value);
