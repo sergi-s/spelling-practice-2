@@ -43,7 +43,7 @@ const generateAndSaveSentence = async (n = 1, notify: Notify) => {
 
 export const GET = async () => {
 
-    const n = 1;
+    const n = 50;
     const responseStream = new TransformStream();
     const writer = responseStream.writable.getWriter();
     const encoder = new TextEncoder();

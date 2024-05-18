@@ -19,6 +19,8 @@ export const Spelling = () => {
 
     const [options, setOptions] = useState<Array<{ value: string, label: string }>>([]);
     const [selectedOption, setSelectedOption] = useState<{ value: string, label: string } | null>(null);
+    
+    //TODO: create a new state to store the wrong spelled words
 
     useEffect(() => {
         const fetchTopics = async () => {

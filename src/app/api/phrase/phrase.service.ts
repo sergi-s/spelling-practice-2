@@ -55,14 +55,11 @@ export async function saveGeneratedPhrase(difficulty: number, language: Language
             }
         }
 
+        let isTopic = await prisma.topic.findUnique({ where: { topic } })
+        if (!isTopic) isTopic = await prisma.topic.create({ data: { topic } })
         const sentenceP = await prisma.phrase.create({
             data: {
-                phrase, difficulty, wordIDs, topic: {
-                    connectOrCreate: {
-                        where: { topic }, // Replace `topicId` with the actual ID of the topic you want to connect to
-                        create: { topic } // Replace "New Topic" with the actual topic name you want to create
-                    }
-                }
+                phrase, difficulty, wordIDs, topicId:isTopic.id
             }
         });
 
