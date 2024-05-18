@@ -26,7 +26,7 @@ export const SpeakButton = ({ text }: { text?: string }): React.ReactNode => {
     const { speak, cancel } = useSpeechSynthesis();
     return <IconButton id="thisIsAShitSolution" onClick={() => { void cancel(); void speak({ text }) }} color="blue">
         Read Again
-        <FaRedo className="text-white" />
+        <FaRedo className="ml-4 text-white" />
     </IconButton>
 
 }
