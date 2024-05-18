@@ -18,12 +18,12 @@ export const Spelling = () => {
     const [checkSpelling, setCheckSpelling] = useState<boolean>(false);
 
     const [options, setOptions] = useState<Array<{ value: string, label: string }>>([]);
-    const [selectedOption, setSelectedOption] = useState<{ value: string, label: string }>(undefined);
+    const [selectedOption, setSelectedOption] = useState<{ value: string, label: string } | null>(null);
 
     useEffect(() => {
         const fetchTopics = async () => {
             try {
-                const uniqueTopics = await (await fetch('/api/topics')).json();
+                const uniqueTopics = await (await fetch('/api/topics')).json() as string[];
                 const topics: { value: string, label: string }[] = uniqueTopics.map((topic: string) => ({ value: topic, label: topic }));
                 setOptions(topics);
             } catch (error) {
@@ -55,7 +55,7 @@ export const Spelling = () => {
     }, difficulty, selectedOption)
 
     const handleButtonClick = () => {
-        void fetchNewSentence(difficulty, selectedOption.value);
+        void fetchNewSentence(difficulty, selectedOption?.value);
         setUserInput('')
     };
 
