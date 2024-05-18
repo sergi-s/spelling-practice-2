@@ -53,7 +53,10 @@ model Phrase {
     updatedAt  DateTime @updatedAt
     wordIDs    String[] @db.ObjectId
     difficulty Int?
-    posts      Word[]   @relation(fields: [wordIDs], references: [id])
+    words      Word[]   @relation(fields: [wordIDs], references: [id])
+
+    topicId String @db.ObjectId
+    topic   Topic  @relation(fields: [topicId], references: [id])
 }
 
 model UserWord {
@@ -64,4 +67,13 @@ model UserWord {
     userId            String @db.ObjectId
     encounters        Int    @default(0)
     correctEncounters Int    @default(0)
+}
+
+model Topic {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    topic     String   @unique
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    phrases Phrase[]
 }

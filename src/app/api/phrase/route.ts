@@ -17,5 +17,6 @@ export const POST = async (
         });
     }
 
-    return NextResponse.json(await getRandomPhrasesNotInList(response.data.sentenceIds, response.data.difficulty))
+    const { sentenceIds, difficulty, topic } = response.data
+    return NextResponse.json(await getRandomPhrasesNotInList(sentenceIds, difficulty, topic))
 }

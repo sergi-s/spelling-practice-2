@@ -3,7 +3,7 @@
 // tsc index.ts && mv index.js index.cjs && node index.cjs && rm index.cjs
 import { PrismaClient } from '@prisma/client'
 
-export const prisma = new PrismaClient()
+const prisma = new PrismaClient()
 
 // import { prisma } from '../../prisma';
 function levenshteinDistance(s1, s2) {
