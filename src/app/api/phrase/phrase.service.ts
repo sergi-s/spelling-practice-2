@@ -88,7 +88,9 @@ export async function saveGeneratedPhrase(difficulty: number, language: Language
                 if (!savedWord) {
                     savedWord = await prisma.word.create({ data: { stemmedWord, representations: [word] } });
                 } else {
-                    await prisma.word.update({ where: { stemmedWord }, data: { representations: { push: word } } });
+                    if (!savedWord.representations.includes(word)) {
+                        await prisma.word.update({ where: { stemmedWord }, data: { representations: { push: word } } });
+                    }
                 }
 
                 wordIDs.push(savedWord.id);
@@ -97,14 +99,17 @@ export async function saveGeneratedPhrase(difficulty: number, language: Language
 
         let isTopic
         if (topic) {
-            let isTopic = await prisma.topic.findUnique({ where: { topic } })
-            if (!isTopic) isTopic = await prisma.topic.create({ data: { topic } })
+            isTopic = await prisma.topic.findUnique({ where: { topic } })
+            if (!isTopic) {
+                isTopic = await prisma.topic.create({ data: { topic } })
+            }
         }
 
         const sentenceP = await prisma.phrase.create({
             data: {
-                phrase, difficulty, wordIDs,
-                // topicId: isTopic.id
+                phrase,
+                difficulty,
+                wordIDs,
                 ...(isTopic && { topicId: isTopic.id })
             }
         });
