@@ -5,7 +5,7 @@ export const useSentenceAPI = () => {
     const [sentence, setSentence] = useState<{ phrase: string, id: string }>();
 
 
-    const fetchNewSentence = async (difficulty?: number, topic?: string) => {
+    const fetchNewSentence = async (difficulty?: number, topic?: string, wrongSpelling?: Array<string> | null) => {
         
         // TODO: get array of misspelled words
         try {
@@ -15,7 +15,7 @@ export const useSentenceAPI = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ sentenceIds, difficulty, topic, /**misspelled words */ }),
+                body: JSON.stringify({ sentenceIds, difficulty, topic, misspelledWords:wrongSpelling/**misspelled words */ }),
             });
             if (response.ok) {
                 console.log({ oldSentence: sentence })
