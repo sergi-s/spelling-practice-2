@@ -20,6 +20,6 @@ export const POST = async (
     // TODO: get a sentence that has one or more of the wrong words
     // TODO: if there is none, generate a new sentence based on the wrong words
 
-    const { sentenceIds, difficulty, topic } = response.data
-    return NextResponse.json(await getRandomPhrasesNotInList(sentenceIds, difficulty, topic))
+    const { sentenceIds, difficulty, topic, misspelledWords } = response.data
+    return NextResponse.json(await getRandomPhrasesNotInList(sentenceIds, difficulty, topic, misspelledWords))
 }
