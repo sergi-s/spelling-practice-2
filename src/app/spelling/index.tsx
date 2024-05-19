@@ -107,17 +107,18 @@ export const Spelling = () => {
 
     const correctPhrase = (sentence?.phrase ?? "")
       .replace(/[^a-zA-Z\s]/g, " ")
-      .toLowerCase()
+      .toLowerCase().trim()
       .split(" ");
     const userPhrase = userInput
       .replace(/[^a-zA-Z\s]/g, " ")
       .replace(/\s{2,}/g, " ")
-      .toLowerCase()
+      .toLowerCase().trim()
       .split(" ");
 
     const missSpelledWords = correctPhrase.filter(
-      (word, index) => word !== userPhrase[index],
+      (word, index) => word !== userPhrase[index]
     );
+    console.log({ missSpelledWords })
     const isCorrect = missSpelledWords.length === 0;
     setComparisonResult({ correct: isCorrect, missSpelledWords });
 
@@ -171,19 +172,13 @@ export const Spelling = () => {
 
         {checkSpelling && (
           <SpellingComparison
-            correctPhrase={sentence?.phrase.split(" ") ?? []}
-            userPhrase={userInput.split(" ")}
+            correctPhrase={(sentence?.phrase ?? "")
+            .replace(/[^a-zA-Z\s]/g, " ")
+            .toLowerCase().trim()
+            .split(" ") ?? []}
             missSpelledWords={comparisonResult?.missSpelledWords ?? []}
           />
         )}
-
-        {/* <textarea
-                    type="text"
-                    value={userInput}
-                    onChange={handleInputChange}
-                    onKeyDown={handleInputSubmit}
-                    className="col-span-2 px-4 py-2 bg-white text-black rounded border-2 border-gray-300 focus:outline-none focus:border-blue-500"
-                /> */}
 
         <div className="col-span-2 w-[100%]">
           <div className="relative w-full min-w-[200px]">
