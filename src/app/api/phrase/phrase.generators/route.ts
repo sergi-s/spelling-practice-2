@@ -27,14 +27,14 @@ export const generateAndSaveSentence = async (n = 1, notify: Notify) => {
 
         const difficulty = Math.floor(Math.random() * 4) + 1;
         const language = Language.en;
-        const topic = getRandomElement(topics)
+        const topic = getRandomElement(topics);
 
 
         // const phrase = await generateSentence(GemmaChatSentenceStrategy, difficulty, language);
 
         const phrase = await generateSentence(llama3SentenceStrategy, difficulty, language, topic);
         if (!phrase) return notify.log("No sentence generated")
-        const savedPhrase = await saveGeneratedPhrase(difficulty, language, phrase, topic ?? "");
+        const savedPhrase = await saveGeneratedPhrase(difficulty, language, phrase, topic);
         if (!savedPhrase) return notify.log("The sentence was not saved")
         notify.log(`Sentence ${i + 1}, difficulty level:${difficulty}/5, topic:${topic}: ${savedPhrase.phrase}`);
     }
