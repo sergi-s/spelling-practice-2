@@ -21,6 +21,7 @@ export const Spelling = () => {
     const [selectedOption, setSelectedOption] = useState<{ value: string, label: string } | null>(null);
 
     //TODO: create a new state to store the wrong spelled words
+    const [storeWrongSpelling, setStoreWrongSpelling] = useState<Array<string>>([]);
 
     useEffect(() => {
         const fetchTopics = async () => {
@@ -50,7 +51,7 @@ export const Spelling = () => {
     registerShortcut(['Digit1', '1'], speak);
 
     registerShortcut(['Digit2', '2'], async function (localDifficulty: number, localSelectedOption: { value: string, label: string }) {
-        await fetchNewSentence(localDifficulty, localSelectedOption?.value);
+        await fetchNewSentence(localDifficulty, localSelectedOption?.value, storeWrongSpelling);
         setCheckSpelling(false)
         setUserInput('')
         setTimeout(() => { speak() }, 0);
@@ -58,7 +59,7 @@ export const Spelling = () => {
 
     const handleButtonClick = () => {
         setCheckSpelling(false)
-        void fetchNewSentence(difficulty, selectedOption?.value);
+        void fetchNewSentence(difficulty, selectedOption?.value, storeWrongSpelling);
         setUserInput('')
     };
 
@@ -77,10 +78,18 @@ export const Spelling = () => {
         const isCorrect = missSpelledWords.length === 0;
         setComparisonResult({ correct: isCorrect, missSpelledWords });
 
+        const uniqueWrongWords = new Set([...missSpelledWords, ...storeWrongSpelling]);
+        // console.log(uniqueWrongWords);
+        setStoreWrongSpelling(Array.from(uniqueWrongWords));
+    
         const sentenceIds: string[] = JSON.parse(localStorage.getItem('sentenceIds') ?? '[]') as string[];
         localStorage.setItem('sentenceIds', JSON.stringify([...sentenceIds, sentence?.id]));
 
     };
+
+    // useEffect(() => {
+    //     console.log(storeWrongSpelling);
+    //   }, [storeWrongSpelling]);
 
     return (
         <div className="flex min-h-screen flex-col items-center justify-center">
