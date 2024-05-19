@@ -71,17 +71,19 @@ export const Spelling = () => {
         if (event.key !== 'Enter') return;
         setCheckSpelling(true);
 
-        const correctPhrase = (sentence?.phrase ?? '').replace(/[^a-zA-Z\s]/g, ' ').toLowerCase().split(' ');
-        const userPhrase = userInput.replace(/[^a-zA-Z\s]/g, ' ').replace(/\s{2,}/g, ' ').toLowerCase().split(' ');
+        const correctPhrase = (sentence?.phrase ?? '').replace(/[^a-zA-Z\s]/g, ' ').toLowerCase().trim().split(' ');
+        const userPhrase = userInput.replace(/[^a-zA-Z\s]/g, ' ').replace(/\s{2,}/g, ' ').toLowerCase().trim().split(' ');
+        console.log(correctPhrase, "vs", userPhrase)
 
         const missSpelledWords = correctPhrase.filter((word, index) => word !== userPhrase[index]);
         const isCorrect = missSpelledWords.length === 0;
+
         setComparisonResult({ correct: isCorrect, missSpelledWords });
 
         const uniqueWrongWords = new Set([...missSpelledWords, ...storeWrongSpelling]);
         // console.log(uniqueWrongWords);
         setStoreWrongSpelling(Array.from(uniqueWrongWords));
-    
+
         const sentenceIds: string[] = JSON.parse(localStorage.getItem('sentenceIds') ?? '[]') as string[];
         localStorage.setItem('sentenceIds', JSON.stringify([...sentenceIds, sentence?.id]));
 

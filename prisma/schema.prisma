@@ -55,8 +55,8 @@ model Phrase {
     difficulty Int?
     words      Word[]   @relation(fields: [wordIDs], references: [id])
 
-    topicId String @db.ObjectId
-    topic   Topic  @relation(fields: [topicId], references: [id])
+    topicId String? @db.ObjectId
+    topic   Topic?  @relation(fields: [topicId], references: [id])
 }
 
 model UserWord {

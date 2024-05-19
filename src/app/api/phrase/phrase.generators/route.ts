@@ -19,7 +19,7 @@ export function getRandomElement(array: string[]) {
 }
 
 
-const generateAndSaveSentence = async (n = 1, notify: Notify) => {
+export const generateAndSaveSentence = async (n = 1, notify: Notify) => {
     const topics = await prisma.topic.findMany().then((topcis) => {
         return topcis.map(t => t.topic)
     }) as string[]
