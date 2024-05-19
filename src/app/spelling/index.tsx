@@ -85,7 +85,7 @@ export const Spelling = () => {
         <div className="flex min-h-screen flex-col items-center justify-center">
 
             <ShortcutInstructions />
-            <div className="container">
+            <div className="container m-2 p-2">
                 <CreatableSelect
                     options={options}
                     value={selectedOption}
@@ -97,7 +97,7 @@ export const Spelling = () => {
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8 max-w-lg">
-                <h1 className="col-span-2 text-center">Generated Sentence</h1>
+                <h1 className="mt-16 drop-shadow-lg text-3xl col-span-2 text-blue-700 font-bold text-center">Generated Sentence</h1>
 
                 {checkSpelling &&
                     <SpellingComparison
@@ -114,7 +114,7 @@ export const Spelling = () => {
                     className="col-span-2 px-4 py-2 bg-white text-black rounded border-2 border-gray-300 focus:outline-none focus:border-blue-500"
                 />
 
-
+                <DifficultySelect difficulty={difficulty} onChange={setDifficulty} />
 
                 <SpeakButton text={sentence?.phrase} />
 
@@ -123,7 +123,7 @@ export const Spelling = () => {
                     <RiArrowRightSLine className="text-white" />
                 </IconButton>
 
-                <DifficultySelect difficulty={difficulty} onChange={setDifficulty} />
+                {/* <DifficultySelect difficulty={difficulty} onChange={setDifficulty} /> */}
             </div>
         </div>
     );
