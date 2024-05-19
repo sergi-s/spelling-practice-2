@@ -1,5 +1,4 @@
 import { Language } from "../../stemmer/validation";
-import { getRandomElement } from "./route";
 
 
 export interface SentenceGenerationStrategy {

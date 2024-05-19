@@ -10,9 +10,6 @@ export const useSentenceAPI = () => {
         // TODO: get array of misspelled words
         try {
             const sentenceIds: string[] = JSON.parse(localStorage.getItem('sentenceIds') ?? '[]') as string[];
-            console.log("==================")
-            console.log({ topic })
-            console.log("==================")
             const response = await fetch(`/api/phrase/`, {
                 method: 'POST',
                 headers: {
