@@ -1,16 +1,26 @@
 
 import { prisma } from '../prisma';
 import { extractEnglishWords, stem } from '../stemmer/service';
-import { type Language } from '../stemmer/validation';
+import { Language } from '../stemmer/validation';
+import { generateSentence } from './phrase.generators';
+import { llama3SentenceStrategy } from './phrase.generators/llama3-70b-8192';
 
-export async function getRandomPhrasesNotInList(sentenceIds: string[], difficulty: number | undefined, topic?: string) {
+export async function getRandomPhrasesNotInList(sentenceIds: string[], difficulty: number, topic?: string) {
     try {
+        const savedTopic = await prisma.topic.findFirst({ where: { topic } })
+
         const phrasesCount = await prisma.phrase.count({
             where: {
-                difficulty,
+                difficulty, topic: { topic },
                 NOT: { id: { in: sentenceIds } },
             },
         });
+        if (!phrasesCount || !savedTopic) {
+            const phrase = await generateSentence(llama3SentenceStrategy, difficulty, Language.en, topic);
+            if (!phrase) throw new Error("sorry we ran into a problem")
+            const savedPhrase = await saveGeneratedPhrase(difficulty, Language.en, phrase, topic ?? "");
+            return savedPhrase
+        }
         const skip = Math.floor(Math.random() * phrasesCount);
         const phrases = await prisma.phrase.findMany({
             take: 1,
@@ -59,7 +69,7 @@ export async function saveGeneratedPhrase(difficulty: number, language: Language
         if (!isTopic) isTopic = await prisma.topic.create({ data: { topic } })
         const sentenceP = await prisma.phrase.create({
             data: {
-                phrase, difficulty, wordIDs, topicId:isTopic.id
+                phrase, difficulty, wordIDs, topicId: isTopic.id
             }
         });
 

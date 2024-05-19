@@ -19,7 +19,7 @@ export const Spelling = () => {
 
     const [options, setOptions] = useState<Array<{ value: string, label: string }>>([]);
     const [selectedOption, setSelectedOption] = useState<{ value: string, label: string } | null>(null);
-    
+
     //TODO: create a new state to store the wrong spelled words
 
     useEffect(() => {
@@ -50,13 +50,14 @@ export const Spelling = () => {
     registerShortcut(['Digit1', '1'], speak);
 
     registerShortcut(['Digit2', '2'], async function (localDifficulty: number, localSelectedOption: { value: string, label: string }) {
-        await fetchNewSentence(localDifficulty, localSelectedOption.value);
+        await fetchNewSentence(localDifficulty, localSelectedOption?.value);
         setCheckSpelling(false)
         setUserInput('')
         setTimeout(() => { speak() }, 0);
     }, difficulty, selectedOption)
 
     const handleButtonClick = () => {
+        setCheckSpelling(false)
         void fetchNewSentence(difficulty, selectedOption?.value);
         setUserInput('')
     };
