@@ -1,76 +1,60 @@
-import natural, { type DataRecordsCallback, type Stemmer } from 'natural';
 
-const wordnet = new natural.WordNet("./node_modules/wordnet-db/dict");
-const tokenizer = new natural.WordTokenizer();
+import { stemmer } from 'stemmer';
+import WordNet from 'wordnet';
+import path from 'path';
 
 
-export const stemmers: Record<string, Stemmer> = {
-    en: natural.PorterStemmer,
-    fn: natural.PorterStemmerFr,
+// Construct the relative path to the WordNet database file
+const dbPath = path.resolve('./node_modules/wordnet/db');
+await WordNet.init(dbPath);
+
+const lookupWord = async (word: string): Promise<string | undefined> => {
+    try {
+        const definitions = await WordNet.lookup(word.toLowerCase());
+        return definitions && definitions.length > 0 ? word : undefined;
+    } catch (error) {
+        // console.error("Error looking up the word:", error);
+        return undefined;
+    }
 };
 
-export const stemText = (phrase: string, porterStemmer: Stemmer): string => {
-    return porterStemmer.tokenizeAndStem(phrase).join(' ')
-}
 
-function lookupAsync(word: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-        const callback: DataRecordsCallback = (results): void => {
-            if (results && results.length > 0) {
-                // console.log({ results })
-                resolve(word);
-            } else {
-                reject(word);
-            }
-        };
-        wordnet.lookup(word, callback);
-    });
-}
+export const stemmers: Record<string, unknown> = {
+    en: stemmer,
+    // fn: natural.PorterStemmerFr,
+};
+
+
 
 
 export const extractEnglishWords = async (phrase: string) => {
-    // Tokenize the input phrase
-    const tokenized: string[] = tokenizer.tokenize(phrase);
 
-    // Look up each token asynchronously and collect the results
-    const promiseResult = await Promise.allSettled(tokenized.map((word) => lookupAsync(word))) || []
+    const words = phrase.split(" ").filter(word => word.trim() !== "");
+
+    const foundEnglishWords = (await Promise.all(words.map(lookupWord))).filter(Boolean)
 
     // Filter out words that are not found but could be stemmed to English words
-    const wordsNotFound = promiseResult
-        .filter((promise) => promise.status === 'rejected')
-        .map((promise) => (promise as PromiseRejectedResult).reason as string);
+    const wordsNotFound = words.filter((w) => !foundEnglishWords.find((word) => w === word))
 
-    // Stem the words and look up their meanings
-    const stemmedWords = wordsNotFound.map(word => stemText(word, natural.PorterStemmer));
-    const englishWords2 = await lookupWords(stemmedWords);
+    console.log({ wordsNotFound })
 
-    // Filter out successfully found English words from the original tokens
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
-    const englishWords1 = await lookupWords(tokenized.filter((word, index) => promiseResult[index].status === 'fulfilled'));
+    // for words not found Stem and try again
+    const stemmedWords = wordsNotFound.map(word => stemmer(word));
+    const stemmedAndFoundEnglishWords = (await Promise.all(stemmedWords.map(lookupWord))).filter(Boolean);
+    console.log({ stemmedAndFoundEnglishWords })
 
-    // console.log([...englishWords1, ...englishWords2])
     // Merge the results and return
-    return [...englishWords1, ...englishWords2];
+    return [...foundEnglishWords, ...stemmedAndFoundEnglishWords];
 }
-
-// Helper function to look up words asynchronously
-const lookupWords = async (words: string[]) => {
-    const results = await Promise.allSettled(words.map((word) => lookupAsync(word)));
-    return results
-        .filter((promise) => promise.status === 'fulfilled')
-        .map((promise) => (promise as PromiseFulfilledResult<string>).value);
-}
-
 
 
 
 export const stem = async (text: string, lang: "en" | "fr") => {
+    const englishWords = await extractEnglishWords(text) as string[];
+    if (!stemmers[lang]) throw new Error("Invalid language");
 
-    const englishWords: string[] = await extractEnglishWords(text)
-    const stemmer = stemmers[lang]
+    const uniqueEnglishWords = Array.from(new Set(englishWords));
+    // const stemmer = stemmers[lang];
 
-    if (!stemmer) throw new Error("Invalid language")
-
-    return stemText(englishWords.join(' '), stemmer)
-}
+    return uniqueEnglishWords.map(word => stemmer(word)).join(" ");
+};
