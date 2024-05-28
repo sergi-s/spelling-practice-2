@@ -3,8 +3,8 @@ import { prisma } from '../prisma';
 import { extractEnglishWords, stem } from '../stemmer/service';
 import { Language } from '../stemmer/validation';
 import { generateSentence } from './phrase.generators';
+import { getRandomElement } from './phrase.generators/helpers';
 import { generateSentenceBasedOnaWord, llama3SentenceStrategy } from './phrase.generators/llama3-70b-8192';
-import { getRandomElement } from './phrase.generators/route';
 
 export async function getRandomPhrasesNotInList(sentenceIds: string[], difficulty?: number, topic?: string, misspelledWords?: string[]) {
     try {
@@ -80,6 +80,7 @@ export async function saveGeneratedPhrase(difficulty: number, language: Language
         const wordIDs = [];
 
         for await (const word of englishWords) {
+            if (!word) continue;
             const stemmedWord = await stem(word, language);
 
             if (stemmedWord) {

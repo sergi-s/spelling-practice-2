@@ -47,7 +47,7 @@ export const Spelling = () => {
       }
     };
 
-    fetchTopics();
+    void fetchTopics();
   }, []);
 
   const handleChange = (selectedOption: { value: string; label: string }) => {
@@ -152,6 +152,8 @@ export const Spelling = () => {
         <CreatableSelect
           options={options}
           value={selectedOption}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          //@ts-ignore
           onChange={handleChange}
           onCreateOption={handleCreate}
           placeholder="Search and select or create a topic..."
@@ -173,9 +175,9 @@ export const Spelling = () => {
         {checkSpelling && (
           <SpellingComparison
             correctPhrase={(sentence?.phrase ?? "")
-            .replace(/[^a-zA-Z\s]/g, " ")
-            .toLowerCase().trim()
-            .split(" ") ?? []}
+              .replace(/[^a-zA-Z\s]/g, " ")
+              .toLowerCase().trim()
+              .split(" ") ?? []}
             missSpelledWords={comparisonResult?.missSpelledWords ?? []}
           />
         )}
@@ -185,7 +187,11 @@ export const Spelling = () => {
             <textarea
               type="text"
               value={userInput}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              //@ts-ignore
               onChange={handleInputChange}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              //@ts-ignore
               onKeyDown={handleInputSubmit}
               className="border-blue-gray-200 text-blue-gray-700 placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 disabled:bg-blue-gray-50 peer h-full min-h-[100px] w-full resize-none rounded-[7px] border border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal outline outline-0 transition-all placeholder-shown:border focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:resize-none disabled:border-0"
               placeholder=" "

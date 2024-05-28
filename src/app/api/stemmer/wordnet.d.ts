@@ -59,7 +59,7 @@ type AdjectivePointerSymbol = '!'|'&'|'<'|'\\'|'='|'^'|';c'|';r'|';u';
  * ;r    Domain of synset - REGION 
  * ;u    Domain of synset - USAGE
 */
-type AdverbPointerSymbol = '!'|'/'|';r'|';r'|';u';
+type AdverbPointerSymbol = '!'|'/'|';r'|';u';
 
 type PointerSymbol = NounPointerSymbol | VerbPointerSymbol | AdverbPointerSymbol | AdjectivePointerSymbol;
 
