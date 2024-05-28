@@ -1,5 +1,5 @@
-import type { NextApiRequest } from 'next';
-import { NextResponse } from 'next/server';
+"use server"
+import { type NextRequest, NextResponse } from 'next/server';
 import { schema } from './validation';
 import { extractEnglishWords, stem } from './service';
 
@@ -7,20 +7,22 @@ import { extractEnglishWords, stem } from './service';
 
 
 
-export const POST = async (req: NextApiRequest) => {
+export const POST = async (req: NextRequest) => {
     try {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const body = await req.json();
         const response = schema.safeParse(body);
 
         if (!response.success) {
-            const { errors } = response.error;
-            console.log({ errors });
+            // const { errors } = response.error;
+            // console.log({ errors });
             return NextResponse.json({
-                error: { message: "Invalid request", errors },
+                error: { message: "Invalid request" },
             }, { status: 400 });
         }
 
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, prefer-const
         let { language, phrase } = response.data;
         // what comes next should be language specific (because french has accents and what not)
 

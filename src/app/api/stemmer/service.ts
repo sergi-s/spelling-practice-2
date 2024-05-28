@@ -1,13 +1,17 @@
-
+"use server"
 import { stemmer } from 'stemmer';
 import WordNet from 'wordnet';
-import path from 'path';
+// import path from 'path';
 
 
 // Construct the relative path to the WordNet database file
-const dbPath = path.resolve('./node_modules/wordnet/db');
-await WordNet.init(dbPath);
-
+// const dbPath = path.resolve('./node_modules/wordnet/db');
+// console.log({ dbPath })
+// await WordNet.init("./node_modules/wordnet/db");
+const initializeWordNet = async () => {
+    await WordNet.init("./node_modules/wordnet/db");
+};
+void initializeWordNet();
 const lookupWord = async (word: string): Promise<string | undefined> => {
     try {
         const definitions = await WordNet.lookup(word.toLowerCase());
@@ -19,7 +23,7 @@ const lookupWord = async (word: string): Promise<string | undefined> => {
 };
 
 
-export const stemmers: Record<string, unknown> = {
+const stemmers: Record<string, unknown> = {
     en: stemmer,
     // fn: natural.PorterStemmerFr,
 };

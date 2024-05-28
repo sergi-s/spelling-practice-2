@@ -5,6 +5,16 @@
 await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+  reactStrictMode: true,
+  swcMinify: true,
+
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals.push("wordnet");
+    }
+    return config;
+  },
+};
 
 export default config;

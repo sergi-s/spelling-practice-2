@@ -1,19 +1,18 @@
-import type { NextApiRequest } from 'next'
-import { NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { getRandomPhrasesNotInList } from './phrase.service';
 import { schema } from './phrase.validation';
 
 
 export const POST = async (
-    req: NextApiRequest,
+    req: NextRequest,
 ) => {
     const body = await req.json() as unknown;
     const response = schema.safeParse(body);
 
     if (!response.success) {
-        const { errors } = response.error;
+        // const { errors } = response.error;
         return NextResponse.json({
-            error: { message: "Invalid request", errors },
+            error: { message: "Invalid request" },
         });
     }
     // TODO: get array of wrong words

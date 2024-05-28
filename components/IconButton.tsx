@@ -1,4 +1,4 @@
-
+// eslint-disable-next-line @typescript-eslint/ban-types
 const IconButton = ({ onClick, color, children, id }: { onClick: Function, color: string, children: React.ReactNode, id?: string }) => {
     const handleClick = () => {
         if (onClick) {

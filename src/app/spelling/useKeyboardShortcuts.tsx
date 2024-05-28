@@ -1,9 +1,12 @@
 import IconButton from 'components/IconButton';
 import { useEffect } from 'react';
 import { FaRedo } from 'react-icons/fa';
+
 import { useSpeechSynthesis } from 'react-speech-kit';
 
-export const registerShortcut = (shortcut: string[], action: Function, ...params) => {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export const registerShortcut = (shortcut: string[], action: Function, ...params: (number | { value: string; label: string; } | null | undefined)[]) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
 
         const handleKeyDown = (event: KeyboardEvent) => {
