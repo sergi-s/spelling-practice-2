@@ -1,8 +1,9 @@
 
-import { prisma } from '../prisma';
+import { prisma } from '../globalVariables';
 import { extractEnglishWords, stem } from '../stemmer/service';
 import { Language } from '../stemmer/validation';
 import { generateSentence } from './phrase.generators';
+import { GemmaChatSentenceStrategy } from './phrase.generators/gemma.2b.chat';
 import { getRandomElement } from './phrase.generators/helpers';
 import { generateSentenceBasedOnaWord, llama3SentenceStrategy } from './phrase.generators/llama3-70b-8192';
 
@@ -46,10 +47,13 @@ export async function getRandomPhrasesNotInList(sentenceIds: string[], difficult
         });
         // Generate a new sentence if we did not find any with the same topic
         if (!phrasesCount || !savedTopic) {
-            const phrase = await generateSentence(llama3SentenceStrategy, difficulty, Language.en, topic);
+            // const phrase = await generateSentence(llama3SentenceStrategy, difficulty, Language.en, topic);
+
+            const phrase = await generateSentence(GemmaChatSentenceStrategy, difficulty, Language.en, topic);
             if (!phrase) throw new Error("sorry we ran into a problem")
-            const savedPhrase = await saveGeneratedPhrase(difficulty, Language.en, phrase, topic ?? "");
-            return savedPhrase
+            return phrase
+            // const savedPhrase = await saveGeneratedPhrase(difficulty, Language.en, phrase, topic ?? "");
+            // return savedPhrase
         }
         const skip = Math.floor(Math.random() * phrasesCount);
         const phrases = await prisma.phrase.findMany({

@@ -7,7 +7,6 @@ export const useSentenceAPI = () => {
 
     const fetchNewSentence = async (difficulty?: number, topic?: string, wrongSpelling?: Array<string> | null) => {
         
-        // TODO: get array of misspelled words
         try {
             const sentenceIds: string[] = JSON.parse(localStorage.getItem('sentenceIds') ?? '[]') as string[];
             const response = await fetch(`/api/phrase/`, {

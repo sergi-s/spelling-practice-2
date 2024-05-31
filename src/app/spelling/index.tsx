@@ -27,7 +27,6 @@ export const Spelling = () => {
     label: string;
   } | null>(null);
 
-  //TODO: create a new state to store the wrong spelled words
   const [storeWrongSpelling, setStoreWrongSpelling] = useState<Array<string>>(
     [],
   );
@@ -220,7 +219,5 @@ export const Spelling = () => {
 // TODO: 1- Add french
 
 // TODO: 2- Auth module, and tracking what words are spelled incorrectly by the user
-
-// TODO; 3- Add an array of topics to the LLM to introduce more randomness and relevancy in generating sentences to be dictated
 
 // TODO: 4- ReWrite the sentence generator

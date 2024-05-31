@@ -26,6 +26,7 @@
     "react-select": "^5.8.0",
     "react-speech-kit": "^3.0.1",
     "stemmer": "^2.0.1",
+    "syllable": "^5.0.1",
     "wordnet": "^2.0.0",
     "yarn": "^1.22.22",
     "zod": "^3.22.4"
