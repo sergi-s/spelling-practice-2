@@ -11,15 +11,17 @@ export function calculateSentenceDifficulty(sentence: string): number {
 
     // Word Length Score
     const lengthScores: number[] = words.map(word => Math.abs(word.length - averageWordLength));
-    const avgLengthScore: number = lengthScores.reduce((a, b) => a + b, 0) / lengthScores.length;
+    const maxLengthScore: number = Math.max(...lengthScores);
+
 
     // Syllable Count Score
     const syllableScores: number[] = words.map(word => syllable(word));
-    const avgSyllableScore: number = syllableScores.reduce((a, b) => a + b, 0) / syllableScores.length;
+    const maxSyllableScores: number = Math.max(...syllableScores);
+    // const avgSyllableScore: number = syllableScores.reduce((a, b) => a + b, 0) / syllableScores.length;
 
     const frequencyScore = normalizeFrequencyScore(wordFrequencyScores, words)
     // Combine Scores
-    const difficultyScore: number = (frequencyScore + avgLengthScore + avgSyllableScore) / 3;
+    const difficultyScore: number = (frequencyScore + maxLengthScore + maxSyllableScores);
 
     // console.log({ sentence, avgLengthScore, avgSyllableScore, frequencyScore, difficultyScore, syllableScores })
     return difficultyScore;

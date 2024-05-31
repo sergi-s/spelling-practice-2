@@ -1,5 +1,4 @@
-import { generateAndSaveSentence } from "./helpers";
-
+import { generateAndSaveSentence } from ".";
 
 const SSE = async () => {
 
