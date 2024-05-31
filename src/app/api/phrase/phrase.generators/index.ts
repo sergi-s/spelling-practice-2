@@ -1,6 +1,11 @@
 import { Language } from "../../stemmer/validation";
 
 
+// TODO: new difficulty implementation
+// TODO: 1- generate a phrase (later will try to make the difficulty as input work)
+// TODO: 2- get the number of syllabus for each word, and based on the maximum set the difficulty level
+// TODO: 3- update the schema so for each word there is a number of appearances, and the number of incorrect spelling, and based on the maximum set the difficulty level
+
 export interface SentenceGenerationStrategy {
     generateSentence(difficulty: number, language: Language, topic: string): Promise<string | undefined>;
 }

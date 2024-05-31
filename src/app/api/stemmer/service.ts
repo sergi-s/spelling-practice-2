@@ -1,18 +1,12 @@
 "use server"
 import { stemmer } from 'stemmer';
 import WordNet from 'wordnet';
-// import path from 'path';
 
-
-// Construct the relative path to the WordNet database file
-// const dbPath = path.resolve('./node_modules/wordnet/db');
-// console.log({ dbPath })
-// await WordNet.init("./node_modules/wordnet/db");
 const initializeWordNet = async () => {
     await WordNet.init("./node_modules/wordnet/db");
 };
 void initializeWordNet();
-const lookupWord = async (word: string): Promise<string | undefined> => {
+export const lookupWord = async (word: string): Promise<string | undefined> => {
     try {
         const definitions = await WordNet.lookup(word.toLowerCase());
         return definitions && definitions.length > 0 ? word : undefined;
@@ -40,12 +34,9 @@ export const extractEnglishWords = async (phrase: string) => {
     // Filter out words that are not found but could be stemmed to English words
     const wordsNotFound = words.filter((w) => !foundEnglishWords.find((word) => w === word))
 
-    console.log({ wordsNotFound })
-
     // for words not found Stem and try again
     const stemmedWords = wordsNotFound.map(word => stemmer(word));
     const stemmedAndFoundEnglishWords = (await Promise.all(stemmedWords.map(lookupWord))).filter(Boolean);
-    console.log({ stemmedAndFoundEnglishWords })
 
     // Merge the results and return
     return [...foundEnglishWords, ...stemmedAndFoundEnglishWords];
@@ -53,7 +44,7 @@ export const extractEnglishWords = async (phrase: string) => {
 
 
 
-export const stem = async (text: string, lang: "en" | "fr") => {
+export const stem = async (text: string, lang: "en" | "fr" = "en") => {
     const englishWords = await extractEnglishWords(text) as string[];
     if (!stemmers[lang]) throw new Error("Invalid language");
 
