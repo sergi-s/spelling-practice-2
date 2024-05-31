@@ -1,11 +1,13 @@
 
+import { getRandomElement } from '~/app/utils/random/chooseRandomElement';
 import { prisma } from '../globalVariables';
 import { extractEnglishWords, stem } from '../stemmer/service';
 import { Language } from '../stemmer/validation';
 import { generateSentence } from './phrase.generators';
-import { GemmaChatSentenceStrategy } from './phrase.generators/gemma.2b.chat';
-import { getRandomElement } from './phrase.generators/helpers';
-import { generateSentenceBasedOnaWord, llama3SentenceStrategy } from './phrase.generators/llama3-70b-8192';
+import { GemmaChatSentenceStrategy, GemmaTopicMessage, GemmaWordMessage } from './phrase.generators/strategies/gemma.2b.chat';
+
+
+//TODO: repo pattern
 
 export async function getRandomPhrasesNotInList(sentenceIds: string[], difficulty?: number, topic?: string, misspelledWords?: string[]) {
     try {
@@ -23,7 +25,8 @@ export async function getRandomPhrasesNotInList(sentenceIds: string[], difficult
             if (!word) return { phrase: 'No word found you need to generate a new one' }
             const phrase = await prisma.phrase.findFirst({ where: { wordIDs: { has: word.id }, NOT: { id: { in: sentenceIds } }, } })
             if (!phrase) {
-                const p = await generateSentenceBasedOnaWord(1, Language.en, getRandomElement(word.representations) ?? word.stemmedWord)
+                const p = await generateSentence(GemmaChatSentenceStrategy, [new GemmaWordMessage(getRandomElement(word.representations) ?? word.stemmedWord)])
+                // const p = await generateSentenceBasedOnaWord(1, Language.en, getRandomElement(word.representations) ?? word.stemmedWord)
                 if (!p) return { phrase: "no phrase found 3x" }
                 const savedPhrase = await saveGeneratedPhrase(1, Language.en, p)
                 return savedPhrase
@@ -47,9 +50,7 @@ export async function getRandomPhrasesNotInList(sentenceIds: string[], difficult
         });
         // Generate a new sentence if we did not find any with the same topic
         if (!phrasesCount || !savedTopic) {
-            // const phrase = await generateSentence(llama3SentenceStrategy, difficulty, Language.en, topic);
-
-            const phrase = await generateSentence(GemmaChatSentenceStrategy, difficulty, Language.en, topic);
+            const phrase = await generateSentence(GemmaChatSentenceStrategy, [new GemmaTopicMessage(topic!)]);
             if (!phrase) throw new Error("sorry we ran into a problem")
             return phrase
             // const savedPhrase = await saveGeneratedPhrase(difficulty, Language.en, phrase, topic ?? "");
