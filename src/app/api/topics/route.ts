@@ -80,7 +80,7 @@ const seederTopics = [
     "policy making", "governance", "public administration", "political science", "international relations",
     "diplomacy", "security studies", "intelligence studies", "military studies", "defense studies",
     "strategic studies", "peace and conflict studies", "human security", "national security",
-    "global security", "cybersecurity", "terrorism", "counterterrorism", "insurgency", "counterinsurgency",
+    "global security", "cybersecurity", "insurgency", "counterinsurgency",
     "homeland security", "border security"]
 
 export const POST = async () => {

@@ -75,6 +75,7 @@ export const GET = async () => {
         const sentenceStr = sentence.phrase.replace(/[^a-zA-Z\s]/g, '').toLowerCase();
         const difficultyScore: number = calculateSentenceDifficulty(sentenceStr);
         r[sentenceStr] = difficultyScore;
+        console.log("=============")
     }
     return NextResponse.json(Object.fromEntries(Object.entries(r).sort((a, b) => a[1] - b[1])))
 }

@@ -21,9 +21,10 @@ export function calculateSentenceDifficulty(sentence: string): number {
 
     const frequencyScore = normalizeFrequencyScore(wordFrequencyScores, words)
     // Combine Scores
+    // TODO: flow this = > https://youtube.com/playlist?list=PL8dPuuaLjXtP5mp25nStsuDzk2blncJDW&si=QXQJncuzNDYwFcP4
     const difficultyScore: number = (frequencyScore + maxLengthScore + maxSyllableScores);
 
-    // console.log({ sentence, avgLengthScore, avgSyllableScore, frequencyScore, difficultyScore, syllableScores })
+    console.log({ sentence, len: { lengthScores, maxLengthScore }, syl: { syllableScores, maxSyllableScores }, freq: { words, frequencyScore } })
     return difficultyScore;
 }
 
@@ -34,7 +35,7 @@ function normalizeFrequencyScore(wordFrequencyScores: Record<string, number>, wo
 
     // Calculate the inverted frequency scores
     const invertedFrequencyScores: number[] = words.map(word => maxFrequencyScore - (wordFrequencyScores[word] ?? 0));
-
+    console.log({ sad: words.map((word) => ({ word, freq: wordFrequencyScores[word] })) })
     // Calculate the sum of the inverted frequency scores
     const sumOfInvertedScores: number = invertedFrequencyScores.reduce((sum, score) => sum + score, 0);
 
