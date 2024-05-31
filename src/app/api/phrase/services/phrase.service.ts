@@ -54,7 +54,7 @@ export async function getRandomPhrasesNotInList(sentenceIds: string[], difficult
             // return savedPhrase
         }
         const skip = Math.floor(Math.random() * phrasesCount);
-        const phrases = await phraseRepo.findPhrasesByRandom(skip, difficulty, sentenceIds)
+        const phrases = await phraseRepo.findMany({ skip, take: 1 }, { difficulty, NOT: { id: { in: sentenceIds } } })
         return phrases[0] ?? { phrase: 'No phrases found' }
     } catch (error) {
         console.error('Error fetching random sentence:', error);

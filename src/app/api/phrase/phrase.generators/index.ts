@@ -1,8 +1,8 @@
 import { GemmaChatSentenceStrategy, GemmaTopicMessage } from "./strategies/gemma.2b.chat";
-import { prisma } from "../../globalVariables";
 import { calculateSentenceDifficulty } from "~/app/utils/NLP/calculateDifficulty";
 import { getRandomElement } from "~/app/utils/random/chooseRandomElement";
 import type { Notify, SentenceContentBased, SentenceGenerationStrategy } from "./interfaces";
+import topicRepo from "../../topics/repositories/topicRepository";
 
 
 
@@ -20,7 +20,7 @@ export async function generateSentence(strategy: new () => SentenceGenerationStr
 
         // Generate the sentence using the selected strategy
         const generatedSentence = await sentenceGenerationStrategy.generateSentence(contentBased);
-        
+
         if (!generatedSentence) {
             return generateSentence(strategy, contentBased)
         }
@@ -34,9 +34,7 @@ export async function generateSentence(strategy: new () => SentenceGenerationStr
 
 
 export const generateAndSaveSentence = async (n = 1, notify: Notify) => {
-    const topics = await prisma.topic.findMany().then((topic) => {
-        return topic.map(t => t.topic)
-    })
+    const topics = await topicRepo.getAllTopics()
     for (let i = 0; i < n; i++) {
 
         const topic = getRandomElement(topics)

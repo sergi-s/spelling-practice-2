@@ -1,6 +1,6 @@
 import { prisma } from "../../globalVariables";
 
-const repository = {
+const phraseRepo = {
     getPhraseByWordIdAndNotInSentencesIds: async (wordId: string, sentenceIds: string[]) => {
         return await prisma.phrase.findFirst({ where: { wordIDs: { has: wordId }, NOT: { id: { in: sentenceIds } } } });
     },
@@ -16,16 +16,17 @@ const repository = {
         return count;
     },
 
-    findPhrasesByRandom: async (skip: number, difficulty: number, sentenceIds: string[]) => {
-        return await prisma.phrase.findMany({
-            take: 1,
-            skip: skip,
-            where: {
-                difficulty,
-                NOT: { id: { in: sentenceIds } }
-            }
-        });
+    findMany: async ({ take = 1, skip = 0 }, where?: Record<string, unknown>) => {
+        const queryOptions: {
+            where?: Record<string, unknown>, take: number, skip: number
+        } = { take, skip };
+
+        if (where) {
+            queryOptions.where = where;
+        }
+        return await prisma.phrase.findMany(queryOptions);
     },
+
 
     findPhrasesByCompletePhrase: async (phrase: string) => {
         return await prisma.phrase.findFirst({ where: { phrase } });
@@ -44,4 +45,4 @@ const repository = {
     }
 };
 
-export default repository
+export default phraseRepo

@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '../globalVariables';
+import topicRepo from './repositories/topicRepository';
 
 
 export const GET = async () => {
-    const topics = await prisma.topic.findMany().then((topcis) => {
-        return topcis.map(t => t.topic)
-    })
+    const topics = await topicRepo.getAllTopics()
     return NextResponse.json(topics)
 }
 
@@ -86,5 +84,5 @@ const seederTopics = [
     "homeland security", "border security"]
 
 export const POST = async () => {
-    return NextResponse.json(await prisma.topic.createMany({ data: seederTopics.map(t => { return { topic: t } }) }))
+    return NextResponse.json(await topicRepo.createManyTopics(seederTopics.map(t => { return { topic: t } })))
 }

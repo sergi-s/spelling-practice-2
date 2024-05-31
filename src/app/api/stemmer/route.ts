@@ -46,7 +46,7 @@ export const POST = async (req: NextRequest) => {
 
 
 import { calculateSentenceDifficulty } from '../../utils/NLP/calculateDifficulty';
-import { prisma } from '../globalVariables';
+import phraseRepo from '../phrase/repositories/phraseRepository';
 
 
 // ====================================================
@@ -68,7 +68,8 @@ import { prisma } from '../globalVariables';
 
 export const GET = async () => {
 
-    const sentences = await prisma.phrase.findMany({ take: 30, skip: 0 })
+    // const sentences = await prisma.phrase.findMany({ take: 30, skip: 0 })
+    const sentences = await phraseRepo.findMany({ take: 30, skip: 0 })
     const r: Record<string, number> = {} as Record<string, number>;
     for (const sentence of sentences) {
         const sentenceStr = sentence.phrase.replace(/[^a-zA-Z\s]/g, '').toLowerCase();
