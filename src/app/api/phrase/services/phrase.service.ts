@@ -1,16 +1,19 @@
 
 import { getRandomElement } from '~/app/utils/random/chooseRandomElement';
-import { prisma } from '../globalVariables';
-import { extractEnglishWords, stem } from '../stemmer/service';
-import { Language } from '../stemmer/validation';
-import { generateSentence } from './phrase.generators';
-import { GemmaChatSentenceStrategy, GemmaTopicMessage, GemmaWordMessage } from './phrase.generators/strategies/gemma.2b.chat';
+import { extractEnglishWords, stem } from '../../stemmer/service';
+import { Language } from '../../stemmer/validation';
+import { generateSentence } from '../phrase.generators';
+import { GemmaChatSentenceStrategy, GemmaTopicMessage, GemmaWordMessage } from '../phrase.generators/strategies/gemma.2b.chat';
 
+import topicRepo from '../../topics/repositories/topicRepository';
+import phraseRepo from '../repositories/phraseRepository';
+import wordRepo from '../../word/repositories/wordRepository'
 
-//TODO: repo pattern
 
 export async function getRandomPhrasesNotInList(sentenceIds: string[], difficulty?: number, topic?: string, misspelledWords?: string[]) {
     try {
+
+        // TODO: clean this mess
 
         // 50% old misspelled words
         if (misspelledWords && misspelledWords?.length > 0 && Math.random() > 0.5) {
@@ -20,13 +23,12 @@ export async function getRandomPhrasesNotInList(sentenceIds: string[], difficult
             console.log({ stemmedMisspelledWords })
             const chosenWord = getRandomElement(stemmedMisspelledWords)
             if (!chosenWord) return { phrase: 'No phrases found' }
-            const word = await prisma.word.findFirst({ where: { stemmedWord: chosenWord } });
+            const word = await wordRepo.getWordByStem(chosenWord);
             console.log({ word })
             if (!word) return { phrase: 'No word found you need to generate a new one' }
-            const phrase = await prisma.phrase.findFirst({ where: { wordIDs: { has: word.id }, NOT: { id: { in: sentenceIds } }, } })
+            const phrase = await phraseRepo.getPhraseByWordIdAndNotInSentencesIds(word.id, sentenceIds);
             if (!phrase) {
                 const p = await generateSentence(GemmaChatSentenceStrategy, [new GemmaWordMessage(getRandomElement(word.representations) ?? word.stemmedWord)])
-                // const p = await generateSentenceBasedOnaWord(1, Language.en, getRandomElement(word.representations) ?? word.stemmedWord)
                 if (!p) return { phrase: "no phrase found 3x" }
                 const savedPhrase = await saveGeneratedPhrase(1, Language.en, p)
                 return savedPhrase
@@ -40,14 +42,9 @@ export async function getRandomPhrasesNotInList(sentenceIds: string[], difficult
         difficulty = difficulty ?? 1
 
         // Topic
-        const savedTopic = await prisma.topic.findFirst({ where: { topic } })
+        const savedTopic = await topicRepo.getTopicByName(topic!)
 
-        const phrasesCount = await prisma.phrase.count({
-            where: {
-                difficulty, topic: { topic },
-                NOT: { id: { in: sentenceIds } },
-            },
-        });
+        const phrasesCount = await phraseRepo.countPhrasesByCriteria(difficulty, topic!, sentenceIds)
         // Generate a new sentence if we did not find any with the same topic
         if (!phrasesCount || !savedTopic) {
             const phrase = await generateSentence(GemmaChatSentenceStrategy, [new GemmaTopicMessage(topic!)]);
@@ -57,14 +54,7 @@ export async function getRandomPhrasesNotInList(sentenceIds: string[], difficult
             // return savedPhrase
         }
         const skip = Math.floor(Math.random() * phrasesCount);
-        const phrases = await prisma.phrase.findMany({
-            take: 1,
-            skip: skip,
-            where: {
-                difficulty,
-                NOT: { id: { in: sentenceIds } },
-            }
-        });
+        const phrases = await phraseRepo.findPhrasesByRandom(skip, difficulty, sentenceIds)
         return phrases[0] ?? { phrase: 'No phrases found' }
     } catch (error) {
         console.error('Error fetching random sentence:', error);
@@ -76,7 +66,7 @@ export async function getRandomPhrasesNotInList(sentenceIds: string[], difficult
 export async function saveGeneratedPhrase(difficulty: number, language: Language, phrase: string, topic?: string) {
     try {
         console.log('Saving generated sentence:', phrase);
-        const sentenceAlreadyExists = await prisma.phrase.findFirst({ where: { phrase } });
+        const sentenceAlreadyExists = await phraseRepo.findPhrasesByCompletePhrase(phrase)
         if (sentenceAlreadyExists) {
             return sentenceAlreadyExists;
         }
@@ -89,13 +79,13 @@ export async function saveGeneratedPhrase(difficulty: number, language: Language
             const stemmedWord = await stem(word, language);
 
             if (stemmedWord) {
-                let savedWord = await prisma.word.findUnique({ where: { stemmedWord } });
+                let savedWord = await wordRepo.getWordByStem(stemmedWord);
 
                 if (!savedWord) {
-                    savedWord = await prisma.word.create({ data: { stemmedWord, representations: [word] } });
+                    savedWord = await wordRepo.save(stemmedWord, word)
                 } else {
                     if (!savedWord.representations.includes(word)) {
-                        await prisma.word.update({ where: { stemmedWord }, data: { representations: { push: word } } });
+                        await wordRepo.update(stemmedWord, word)
                     }
                 }
 
@@ -105,20 +95,13 @@ export async function saveGeneratedPhrase(difficulty: number, language: Language
 
         let isTopic
         if (topic) {
-            isTopic = await prisma.topic.findUnique({ where: { topic } })
+            isTopic = await topicRepo.getTopicByName(topic)
             if (!isTopic) {
-                isTopic = await prisma.topic.create({ data: { topic } })
+                isTopic = await topicRepo.save(topic)
             }
         }
 
-        const sentenceP = await prisma.phrase.create({
-            data: {
-                phrase,
-                difficulty,
-                wordIDs,
-                ...(isTopic && { topicId: isTopic.id })
-            }
-        });
+        const sentenceP = await phraseRepo.createPhrase(phrase, difficulty, wordIDs)
 
         return sentenceP;
     } catch (error) {
