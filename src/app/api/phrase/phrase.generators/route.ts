@@ -1,63 +1,54 @@
+import { NextResponse } from "next/server";
 import { generateAndSaveSentence } from ".";
+import { Logger } from "~/app/utils/logger";
+import { ConsoleOutput, StreamOutput } from "~/app/utils/outputs";
 
-const SSE = async () => {
-
+const generateNSentences = async (): Promise<Response | void> => {
+    const useConsole = true
     const n = 10;
-    const responseStream = new TransformStream();
-    const writer = responseStream.writable.getWriter();
-    const encoder = new TextEncoder();
-    let closed = false;
+    let logger: Logger;
+    let response
+    if (useConsole) {
+        logger = new Logger(new ConsoleOutput());
+    } else {
+        const responseStream = new TransformStream<Uint8Array>();
+        const writer = responseStream.writable.getWriter();
+        const encoder = new TextEncoder();
+        logger = new Logger(new StreamOutput(writer, encoder));
 
+        // Return response connected to readable
+        response = new Response(responseStream.readable, {
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "text/event-stream; charset=utf-8",
+                Connection: "keep-alive",
+                "Cache-Control": "no-cache, no-transform",
+                "X-Accel-Buffering": "no",
+                "Content-Encoding": "none",
+            },
+        });
+
+    }
     // Invoke long running process
     generateAndSaveSentence(n, {
-        log: (msg: string) => void writer.write(encoder.encode("data: " + msg + "\n\n")),
-        complete: (obj: string | undefined) => {
-            void writer.write(encoder.encode("data: " + JSON.stringify(obj) + "\n\n"))
-            if (!closed) {
-                void writer.close();
-                closed = true;
-            }
-        },
-        error: (err: Error) => {
-            void writer.write(encoder.encode("data: " + JSON.stringify(err) + "\n\n"));
-            if (!closed) {
-                void writer.close();
-                closed = true;
-            }
-        },
-        close: () => {
-            if (!closed) {
-                void writer.close();
-                closed = true;
-            }
-        },
+        log: (msg: string) => logger.log(msg),
+        complete: (obj: string | undefined) => logger.complete(obj),
+        error: (err: Error) => logger.error(err),
+        close: () => logger.close(),
     }).then(() => {
-        if (!closed) {
-            void writer.close();
-        }
+        logger.close();
     }).catch((e) => {
         console.error("Failed", e);
-        if (!closed) {
-            void writer.close();
-        }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        logger.error(e);
     });
 
-    // Return response connected to readable
-    return new Response(responseStream.readable, {
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "text/event-stream; charset=utf-8",
-            Connection: "keep-alive",
-            "Cache-Control": "no-cache, no-transform",
-            "X-Accel-Buffering": "no",
-            "Content-Encoding": "none",
-        },
-    });
-}
+    return useConsole ? NextResponse.json({ success: "true" }) : response;
+};
 
-// //? NOTE: comment these 2 lines when building
+// // //? NOTE: comment these 2 lines when building
 // export const config = {
 //     runtime: "edge",
 // };
 
-// export { SSE as GET }
+export { generateNSentences as GET }
