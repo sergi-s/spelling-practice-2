@@ -38,7 +38,7 @@ export const generateAndSaveSentence = async (n = 1, notify: Notify) => {
     const topics = await topicRepo.getAllTopics()
     for (let i = 0; i < n; i++) {
 
-        const topic = "football"//getRandomElement(topics)
+        const topic = getRandomElement(topics)
         const contentBased: SentenceContentBased[] = [
             // new GemmaTopicMessage(topic)
             new GeminiTopicMessage(topic)
