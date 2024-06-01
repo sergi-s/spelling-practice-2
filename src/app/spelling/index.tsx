@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useSentenceAPI } from "./useSentenceAPI";
+import { type ChangeEvent, useEffect, useState, type KeyboardEvent } from "react";
+import { useSentenceAPI } from "~/hooks/useSentenceAPI";
 import { SpeakButton, registerShortcut, speak } from "./useKeyboardShortcuts";
 import { DifficultySelect } from "./DifficultySelect";
 import { SpellingComparison } from "./SpellingComparison";
@@ -7,6 +7,7 @@ import { RiArrowRightSLine } from "react-icons/ri";
 import IconButton from "components/IconButton";
 import { ShortcutInstructions } from "components/ShortcutInstructions";
 import CreatableSelect from "react-select/creatable";
+import { cleanString } from "../utils/NLP/cleanStrings";
 
 export const Spelling = () => {
   const { sentence, fetchNewSentence } = useSentenceAPI();
@@ -19,17 +20,10 @@ export const Spelling = () => {
 
   const [checkSpelling, setCheckSpelling] = useState<boolean>(false);
 
-  const [options, setOptions] = useState<
-    Array<{ value: string; label: string }>
-  >([]);
-  const [selectedOption, setSelectedOption] = useState<{
-    value: string;
-    label: string;
-  } | null>(null);
+  const [options, setOptions] = useState<Array<{ value: string; label: string }>>([]);
+  const [selectedOption, setSelectedOption] = useState<{ value: string; label: string; } | null>(null);
 
-  const [storeWrongSpelling, setStoreWrongSpelling] = useState<Array<string>>(
-    [],
-  );
+  const [storeWrongSpelling, setStoreWrongSpelling] = useState<Array<string>>([]);
 
   useEffect(() => {
     const fetchTopics = async () => {
@@ -92,54 +86,25 @@ export const Spelling = () => {
     setUserInput("");
   };
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): undefined => {
-    setUserInput(event.target.value);
-  };
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>): undefined => { setUserInput(event.target.value.replace("\n", ' ')) };
 
-  const handleInputSubmit = (
-    event: React.KeyboardEvent<HTMLInputElement>,
-  ): undefined => {
+  const handleInputSubmit = (event: KeyboardEvent<HTMLInputElement>): undefined => {
     if (event.key !== "Enter") return;
     setCheckSpelling(true);
 
-    const correctPhrase = (sentence?.phrase ?? "")
-      .replace(/[^a-zA-Z\s]/g, " ")
-      .toLowerCase().trim()
-      .split(" ");
-    const userPhrase = userInput
-      .replace(/[^a-zA-Z\s]/g, " ")
-      .replace(/\s{2,}/g, " ")
-      .toLowerCase().trim()
-      .split(" ");
+    const correctPhrase = cleanString(sentence?.phrase ?? "").split(" ")
+    const userPhrase = cleanString(userInput).split(" ");
 
-    const missSpelledWords = correctPhrase.filter(
-      (word, index) => word !== userPhrase[index]
-    );
-    console.log({ missSpelledWords })
+    const missSpelledWords = correctPhrase.filter((word, index) => word !== userPhrase[index]);
     const isCorrect = missSpelledWords.length === 0;
     setComparisonResult({ correct: isCorrect, missSpelledWords });
 
-    const uniqueWrongWords = new Set([
-      ...missSpelledWords,
-      ...storeWrongSpelling,
-    ]);
-    // console.log(uniqueWrongWords);
-    setStoreWrongSpelling(Array.from(uniqueWrongWords));
+    setStoreWrongSpelling(Array.from(new Set([...missSpelledWords, ...storeWrongSpelling])));
 
-    const sentenceIds: string[] = JSON.parse(
-      localStorage.getItem("sentenceIds") ?? "[]",
-    ) as string[];
-    localStorage.setItem(
-      "sentenceIds",
-      JSON.stringify([...sentenceIds, sentence?.id]),
-    );
+    const sentenceIds: string[] = JSON.parse(localStorage.getItem("sentenceIds") ?? "[]") as string[];
+
+    localStorage.setItem("sentenceIds", JSON.stringify([...sentenceIds, sentence?.id]));
   };
-
-  // useEffect(() => {
-  //     console.log(storeWrongSpelling);
-  //   }, [storeWrongSpelling]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
@@ -173,10 +138,7 @@ export const Spelling = () => {
 
         {checkSpelling && (
           <SpellingComparison
-            correctPhrase={(sentence?.phrase ?? "")
-              .replace(/[^a-zA-Z\s]/g, " ")
-              .toLowerCase().trim()
-              .split(" ") ?? []}
+            correctPhrase={cleanString(sentence?.phrase ?? "").split(" ")}
             missSpelledWords={comparisonResult?.missSpelledWords ?? []}
           />
         )}
@@ -209,15 +171,7 @@ export const Spelling = () => {
           Generate New Sentence
           <RiArrowRightSLine className="text-white" />
         </IconButton>
-
-        {/* <DifficultySelect difficulty={difficulty} onChange={setDifficulty} /> */}
       </div>
     </div>
   );
 };
-
-// TODO: 1- Add french
-
-// TODO: 2- Auth module, and tracking what words are spelled incorrectly by the user
-
-// TODO: 4- ReWrite the sentence generator
