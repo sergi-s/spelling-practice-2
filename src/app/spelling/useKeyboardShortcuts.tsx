@@ -5,7 +5,7 @@ import { FaRedo } from 'react-icons/fa';
 import { useSpeechSynthesis } from 'react-speech-kit';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export const registerShortcut = (shortcut: string[], action: Function, ...params: (number | { value: string; label: string; } | null | undefined)[]) => {
+export const registerShortcut = (shortcut: string[], action: Function, ...params: unknown[]) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
 

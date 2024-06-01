@@ -5,15 +5,14 @@ const phraseRepo = {
         return await prisma.phrase.findFirst({ where: { wordIDs: { has: wordId }, NOT: { id: { in: sentenceIds } } } });
     },
 
-    countPhrasesByCriteria: async (difficulty: number, topic: string, sentenceIds: string[]) => {
-        const count = await prisma.phrase.count({
-            where: {
-                difficulty,
-                topic: { topic },
-                NOT: { id: { in: sentenceIds } }
-            }
-        });
-        return count;
+    countPhrasesByCriteria: async ({ take, skip }: { take?: number, skip?: number }, where?: Record<string, unknown>) => {
+        const queryOptions: Record<string, unknown> = {};
+        if (take) queryOptions.take = take;
+        if (skip) queryOptions.skip = skip;
+        if (where) queryOptions.where = where;
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        return prisma.phrase.count(queryOptions);
     },
 
     findMany: async ({ take = 1, skip = 0 }, where?: Record<string, unknown>) => {
@@ -42,6 +41,10 @@ const phraseRepo = {
             }
         });
         return sentenceP;
+    },
+
+    getPhrasesByWord: async (wordId: string) => {
+        return await prisma.phrase.findMany({ where: { wordIDs: { has: wordId } } });
     }
 };
 

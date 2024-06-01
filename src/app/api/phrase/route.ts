@@ -1,27 +1,27 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { schema } from './phrase.validation';
-import { getRandomPhrasesNotInList } from './services/phrase.service';
+import { getRandomPhrasesNotInList, trainOnMisspelledWords } from './services/phrase.service';
 
 
 export const POST = async (
     req: NextRequest,
 ) => {
-    const body = await req.json() as unknown;
-    const response = schema.safeParse(body);
+    try {
+        const body = await req.json() as unknown;
+        const response = schema.safeParse(body);
 
-    if (!response.success) {
-        // const { errors } = response.error;
-        return NextResponse.json({
-            error: { message: "Invalid request" },
-        });
+        if (!response.success) throw new Error("Invalid request")
+
+        const { sentenceIds, difficulty, topic, misspelledWords } = response.data
+
+        const isMisspelledLogic = !!(misspelledWords && misspelledWords.length > 0 && Math.random() > 0.5);
+        console.log({ misspelledWords, isMisspelledLogic })
+
+        if (isMisspelledLogic) return NextResponse.json(await trainOnMisspelledWords(misspelledWords));
+        return NextResponse.json(await getRandomPhrasesNotInList(sentenceIds, difficulty, topic))
+
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        return NextResponse.json({ error: 'Internal Server Error', c: error }, { status: 500 });
     }
-    // TODO: get array of wrong words
-    // TODO: get a sentence that has one or more of the wrong words
-    // TODO: if there is none, generate a new sentence based on the wrong words
-
-
-    // TODO: filter generated sentences (no politics)
-
-    const { sentenceIds, difficulty, topic, misspelledWords } = response.data
-    return NextResponse.json(await getRandomPhrasesNotInList(sentenceIds, difficulty, topic, misspelledWords))
 }

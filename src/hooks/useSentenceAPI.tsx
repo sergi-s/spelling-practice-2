@@ -6,15 +6,17 @@ export const useSentenceAPI = () => {
 
 
     const fetchNewSentence = async (difficulty?: number, topic?: string, wrongSpelling?: Array<string> | null) => {
-        
+
         try {
+
+            wrongSpelling = wrongSpelling?.filter(w => w.length > 0);
             const sentenceIds: string[] = JSON.parse(localStorage.getItem('sentenceIds') ?? '[]') as string[];
             const response = await fetch(`/api/phrase/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ sentenceIds, difficulty, topic, misspelledWords:wrongSpelling/**misspelled words */ }),
+                body: JSON.stringify({ sentenceIds, difficulty, topic, misspelledWords: wrongSpelling }),
             });
             if (response.ok) {
                 console.log({ oldSentence: sentence })
