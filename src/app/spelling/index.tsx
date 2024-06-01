@@ -25,7 +25,7 @@ export const Spelling = () => {
 
   const [storeWrongSpelling, setStoreWrongSpelling] = useState<Array<string>>([]);
 
-  const generateNewSentence = async function (localDifficulty: number, localSelectedOption: { value: string; label: string }) {
+  const generateNewSentence = async function (localDifficulty: number, localSelectedOption: { value: string; label: string }, storeWrongSpelling: string[]) {
     await fetchNewSentence(
       localDifficulty,
       localSelectedOption?.value,
@@ -62,7 +62,7 @@ export const Spelling = () => {
     setSelectedOption(newOption);
   };
 
-  registerShortcut(["Digit2", "2"], generateNewSentence, difficulty, selectedOption);
+  registerShortcut(["Digit2", "2"], generateNewSentence, difficulty, selectedOption, storeWrongSpelling);
 
   registerShortcut(["Digit1", "1"], speak);
 
