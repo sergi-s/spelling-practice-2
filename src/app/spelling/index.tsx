@@ -25,12 +25,21 @@ export const Spelling = () => {
 
   const [storeWrongSpelling, setStoreWrongSpelling] = useState<Array<string>>([]);
 
+  const generateNewSentence = async function (localDifficulty: number, localSelectedOption: { value: string; label: string }) {
+    await fetchNewSentence(
+      localDifficulty,
+      localSelectedOption?.value,
+      storeWrongSpelling,
+    );
+    setCheckSpelling(false);
+    setUserInput("");
+    setTimeout(() => { speak() }, 0);
+  };
+
   useEffect(() => {
     const fetchTopics = async () => {
       try {
-        const uniqueTopics = (await (
-          await fetch("/api/topics")
-        ).json()) as string[];
+        const uniqueTopics = (await (await fetch("/api/topics")).json()) as string[];
         const topics: { value: string; label: string }[] = uniqueTopics.map(
           (topic: string) => ({ value: topic, label: topic }),
         );
@@ -53,28 +62,9 @@ export const Spelling = () => {
     setSelectedOption(newOption);
   };
 
-  registerShortcut(["Digit1", "1"], speak);
+  registerShortcut(["Digit2", "2"], generateNewSentence, difficulty, selectedOption);
 
-  registerShortcut(
-    ["Digit2", "2"],
-    async function (
-      localDifficulty: number,
-      localSelectedOption: { value: string; label: string },
-    ) {
-      await fetchNewSentence(
-        localDifficulty,
-        localSelectedOption?.value,
-        storeWrongSpelling,
-      );
-      setCheckSpelling(false);
-      setUserInput("");
-      setTimeout(() => {
-        speak();
-      }, 0);
-    },
-    difficulty,
-    selectedOption,
-  );
+  registerShortcut(["Digit1", "1"], speak);
 
   const handleButtonClick = () => {
     setCheckSpelling(false);
