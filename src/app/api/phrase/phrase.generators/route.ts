@@ -4,7 +4,7 @@ import { Logger } from "~/app/utils/logger";
 import { ConsoleOutput, StreamOutput } from "~/app/utils/outputs";
 
 const generateNSentences = async (): Promise<Response | void> => {
-    const useConsole = true
+    const useConsole = false
     const n = 10;
     let logger: Logger;
     let response
