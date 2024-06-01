@@ -23,7 +23,7 @@ export async function generateSentence(strategy: new () => SentenceGenerationStr
         const generatedSentence = await sentenceGenerationStrategy.generateSentence(contentBased);
 
         if (!generatedSentence) {
-            return generateSentence(strategy, contentBased)
+            // return generateSentence(strategy, contentBased)
         }
 
         return generatedSentence;
@@ -38,7 +38,7 @@ export const generateAndSaveSentence = async (n = 1, notify: Notify) => {
     const topics = await topicRepo.getAllTopics()
     for (let i = 0; i < n; i++) {
 
-        const topic = getRandomElement(topics)
+        const topic = "football"//getRandomElement(topics)
         const contentBased: SentenceContentBased[] = [
             // new GemmaTopicMessage(topic)
             new GeminiTopicMessage(topic)

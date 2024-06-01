@@ -1,13 +1,16 @@
-import { generateRandomLong } from "~/app/utils/random/randomLong";
-import { generatedChatSentenceSchema } from "../../phrase.validation";
 import type { SentenceGenerationStrategy, SentenceContentBased } from "../interfaces";
 
-import { GoogleGenerativeAI } from "@google/generative-ai"
+import { GoogleGenerativeAI, type Content } from "@google/generative-ai"
+import { generateRandomLong } from "~/app/utils/random/randomLong";
 import { env } from "~/env";
 
-// Access your API key as an environment variable (see "Set up your API key" above)
 const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({
+    model: "gemini-1.5-flash",
+    systemInstruction: "Give me a short sentence to practice my spelling in double quotation marks, don't provide anything else. word count should at most be 10"
+});
 
+const localHistory: Content[] = [];
 
 export class GeminiTopicMessage implements SentenceContentBased {
     public content: string;
@@ -24,23 +27,27 @@ export class GeminiWordMessage implements SentenceContentBased {
 }
 
 export class GeminiChatSentenceStrategy implements SentenceGenerationStrategy {
-    private model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
     async generateSentence(contentMessages: SentenceContentBased[]): Promise<string | undefined> {
         try {
+            const chat = model.startChat({
+                history: localHistory,
+                generationConfig: {
+                    maxOutputTokens: 100,
+                    temperature: 1,
+                },
+            });
+            const prompt = `use ${generateRandomLong()} as a seed \n${contentMessages.map(({ content }) => content).join(", ")}`;
 
-            // The Gemini 1.5 models are versatile and work with both text-only and multimodal prompts
-
-            const prompt = `Give me a very short sentence to practice my spelling in double quotation marks, don't provide anything else, to prevent repeating sentences use this as a seed ${generateRandomLong()}, word count should not exceed 10\n
-            ${contentMessages.map(({ content }) => content).join(" ")}`
-
-            const result = await this.model.generateContent(prompt);
+            localHistory.push({
+                role: "user",
+                parts: [{ text: prompt }],
+            })
+            const result = await chat.sendMessage(prompt);
             const response = result.response;
             const generatedResponse = response.text();
-            console.log({ generatedResponse })
 
-            const sentence = generatedResponse.match(/"([^"]+)"/)?.[1];
-
-            return sentence;
+            return generatedResponse.match(/"([^"]+)"/)?.[1];;
 
         } catch (error) {
             console.error('Error:', error);
