@@ -24,6 +24,7 @@ export const env = createEnv({
     ),
     DISCORD_CLIENT_ID: z.string().optional(),
     DISCORD_CLIENT_SECRET: z.string().optional(),
+    GEMINI_API_KEY: z.string(),
   },
 
   /**
@@ -46,6 +47,7 @@ export const env = createEnv({
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID ?? " asd",
     DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET ?? "ass",
+    GEMINI_API_KEY: process.env.GEMINI_API_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
