@@ -6,7 +6,3 @@ export const schema = z.object({
     topic: z.string().optional(),
     misspelledWords: z.array(z.string()).optional()
 })
-
-export const generatedChatSentenceSchema = z.object({
-    message: z.object({ content: z.string() }),
-});
