@@ -1,3 +1,4 @@
+"use client"
 import { type ChangeEvent, useEffect, useState, type KeyboardEvent } from "react";
 import { useSentenceAPI } from "~/hooks/useSentenceAPI";
 import { SpeakButton, registerShortcut, speak } from "./useKeyboardShortcuts";

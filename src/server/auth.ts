@@ -5,7 +5,7 @@ import {
   type NextAuthOptions,
 } from "next-auth";
 import { type Adapter } from "next-auth/adapters";
-import DiscordProvider from "next-auth/providers/discord";
+import GoogleProvider from "next-auth/providers/google";
 
 import { env } from "~/env";
 import { db } from "~/server/db";
@@ -22,6 +22,7 @@ declare module "next-auth" {
       id: string;
       // ...other properties
       // role: UserRole;
+      role: string,
     } & DefaultSession["user"];
   }
 
@@ -38,19 +39,40 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    session: ({ session, token }) => {
+      if (session.user) {
+        session.user.role = token.role as string;
+        session.user.id = token.id as string;
+      }
+      return session
+    },
+    jwt: ({ token, user }) => {
+      if (user) {
+        token.role = user.role as string;
+        token.id = user.id;
+      }
+      return token;
+    }
   },
-  adapter: PrismaAdapter(db) as Adapter,
+  // adapter: PrismaAdapter(db) as Adapter,
   providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID ?? "DISCORD_CLIENT_ID id",
-      clientSecret: env.DISCORD_CLIENT_SECRET ?? "DISCORD_CLIENT_SECRET",
+    GoogleProvider({
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
+      async profile(profile) {
+        // console.log({ profile,sad:L });
+        let userRole = "Google user"
+        if (profile?.email === "sergisamirboules@gmail.com") {
+          userRole = "admin"
+        }
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture,
+          role: userRole,
+        };
+      }
     }),
     /**
      * ...add more providers here.
@@ -70,3 +92,4 @@ export const authOptions: NextAuthOptions = {
  * @see https://next-auth.js.org/configuration/nextjs
  */
 export const getServerAuthSession = () => getServerSession(authOptions);
+
