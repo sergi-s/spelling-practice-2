@@ -1,11 +1,12 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import {
+  type DefaultUser,
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
 } from "next-auth";
 import { type Adapter } from "next-auth/adapters";
-import GoogleProvider from "next-auth/providers/google";
+import GoogleProvider, { type GoogleProfile } from "next-auth/providers/google";
 
 import { env } from "~/env";
 import { db } from "~/server/db";
@@ -20,16 +21,21 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      // ...other properties
-      // role: UserRole;
-      role: string,
-    } & DefaultSession["user"];
+      role: string;
+    } & DefaultSession['user'];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User extends DefaultUser {
+    id: string;
+    role: string;
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    id: string;
+    role: string;
+  }
 }
 
 /**
@@ -40,30 +46,30 @@ declare module "next-auth" {
 export const authOptions: NextAuthOptions = {
   callbacks: {
     session: ({ session, token }) => {
-      if (session.user) {
-        session.user.role = token.role as string;
-        session.user.id = token.id as string;
+      if (token) {
+        session.user.id = token.id;
+        session.user.role = token.role;
       }
-      return session
+      return session;
     },
     jwt: ({ token, user }) => {
       if (user) {
-        token.role = user.role as string;
+        token.role = user.role;
         token.id = user.id;
       }
       return token;
     }
   },
-  // adapter: PrismaAdapter(db) as Adapter,
+  adapter: PrismaAdapter(db) as Adapter,
   providers: [
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
-      async profile(profile) {
-        // console.log({ profile,sad:L });
-        let userRole = "Google user"
+      async profile(profile: GoogleProfile) {
+
+        let userRole = "Google user";
         if (profile?.email === "sergisamirboules@gmail.com") {
-          userRole = "admin"
+          userRole = "admin";
         }
         return {
           id: profile.sub,
