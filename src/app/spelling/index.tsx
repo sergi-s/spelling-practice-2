@@ -1,11 +1,12 @@
-import { type ChangeEvent, useEffect, useState, type KeyboardEvent } from "react";
+import React, { type ChangeEvent, useEffect, useState, type KeyboardEvent } from "react";
 import { useSentenceAPI } from "~/hooks/useSentenceAPI";
-import { SpeakButton, registerShortcut, speak } from "./useKeyboardShortcuts";
+import { SpeakButton } from "~/app/components/SpeakButton"; // Ensure this path is correct
+import { useKeyboardShortcuts } from "~/app/components/useKeyboardShortcuts"; // Ensure this path is correct
 import { DifficultySelect } from "./DifficultySelect";
 import { SpellingComparison } from "./SpellingComparison";
 import { RiArrowRightSLine } from "react-icons/ri";
-import IconButton from "components/IconButton";
-import { ShortcutInstructions } from "components/ShortcutInstructions";
+import IconButton from "~/app/components/IconButton"; // Ensure this path is correct
+import { ShortcutInstructions } from "~/app/components/ShortcutInstructions";
 import CreatableSelect from "react-select/creatable";
 import { cleanString } from "../utils/NLP/cleanStrings";
 
@@ -17,84 +18,80 @@ export const Spelling = () => {
     correct: boolean;
     missSpelledWords: string[];
   } | null>(null);
-
   const [checkSpelling, setCheckSpelling] = useState<boolean>(false);
-
   const [options, setOptions] = useState<Array<{ value: string; label: string }>>([]);
-  const [selectedOption, setSelectedOption] = useState<{ value: string; label: string; } | null>(null);
+  const [selectedOption, setSelectedOption] = useState<{ value: string; label: string } | null>(null);
+  const [storeWrongSpelling, setStoreWrongSpelling] = useState<string[]>([]);
 
-  const [storeWrongSpelling, setStoreWrongSpelling] = useState<Array<string>>([]);
-
-  const generateNewSentence = async function (localDifficulty: number, localSelectedOption: { value: string; label: string }, storeWrongSpelling: string[]) {
-    await fetchNewSentence(
-      localDifficulty,
-      localSelectedOption?.value,
-      storeWrongSpelling,
-    );
-    setCheckSpelling(false);
-    setUserInput("");
-    setTimeout(() => { speak() }, 0);
-  };
+  const { registerShortcut, speak } = useKeyboardShortcuts();
 
   useEffect(() => {
     const fetchTopics = async () => {
       try {
-        const uniqueTopics = (await (await fetch("/api/topics")).json()) as string[];
-        const topics: { value: string; label: string }[] = uniqueTopics.map(
-          (topic: string) => ({ value: topic, label: topic }),
-        );
-        setOptions(topics);
+        const response = await fetch("/api/topics");
+        const uniqueTopics = await response.json();
+        setOptions(uniqueTopics.map((topic: string) => ({ value: topic, label: topic })));
       } catch (error) {
         console.error("Error fetching topics:", error);
       }
     };
-
-    void fetchTopics();
+    fetchTopics();
   }, []);
 
-  const handleChange = (selectedOption: { value: string; label: string }) => {
-    console.log("the new selected option is ", selectedOption);
-    setSelectedOption(selectedOption);
-  };
-  const handleCreate = (inputValue: string) => {
-    const newOption = { value: inputValue.toLowerCase(), label: inputValue };
-    setOptions((prevOptions) => [...prevOptions, newOption]);
-    setSelectedOption(newOption);
-  };
-
-  registerShortcut(["Digit2", "2"], generateNewSentence, difficulty, selectedOption, storeWrongSpelling);
-
-  registerShortcut(["Digit1", "1"], speak);
-
   const handleButtonClick = () => {
+    console.log("button clicked");
+    void fetchNewSentence(difficulty, selectedOption?.value, storeWrongSpelling);
     setCheckSpelling(false);
-    void fetchNewSentence(
-      difficulty,
-      selectedOption?.value,
-      storeWrongSpelling,
-    );
     setUserInput("");
+    speak({ text: sentence?.phrase ?? "" }); // Correctly pass object to speak
   };
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>): undefined => { setUserInput(event.target.value.replace("\n", ' ')) };
 
-  const handleInputSubmit = (event: KeyboardEvent<HTMLInputElement>): undefined => {
+  const generateNewSentence =  () => { 
+    void fetchNewSentence(difficulty, selectedOption?.value, storeWrongSpelling);
+    setCheckSpelling(false);
+    setUserInput("");
+    setTimeout(()=>{speak({ text: sentence?.phrase ?? "" })},0); // Correctly pass object to speak
+  };
+
+
+
+  [difficulty, selectedOption, storeWrongSpelling, sentence, speak, registerShortcut];
+  registerShortcut({ key: ["Digit2","2"], callback: generateNewSentence });
+  registerShortcut({ key: ["Digit1","1"], callback: () => speak({ text: sentence?.phrase ?? "" }) });
+
+
+
+  // Handles changes to the textarea
+  const handleInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setUserInput(event.target.value.replace("\n", ' '));
+  };
+
+  // Handles key presses in the textarea
+  const handleInputSubmit = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key !== "Enter") return;
     setCheckSpelling(true);
 
-    const correctPhrase = cleanString(sentence?.phrase ?? "").split(" ")
+    const correctPhrase = cleanString(sentence?.phrase ?? "").split(" ");
     const userPhrase = cleanString(userInput).split(" ");
-
     const missSpelledWords = correctPhrase.filter((word, index) => word !== userPhrase[index]);
     const isCorrect = missSpelledWords.length === 0;
     setComparisonResult({ correct: isCorrect, missSpelledWords });
-
-    setStoreWrongSpelling(Array.from(new Set([...missSpelledWords, ...storeWrongSpelling])));
-
-    const sentenceIds: string[] = JSON.parse(localStorage.getItem("sentenceIds") ?? "[]") as string[];
-
-    localStorage.setItem("sentenceIds", JSON.stringify([...sentenceIds, sentence?.id]));
+    setStoreWrongSpelling(prev => [...new Set([...missSpelledWords, ...prev])]);
   };
+
+
+  const handleChange = (newValue: any) => {
+    setSelectedOption(newValue);
+  };
+
+  const handleCreate = (inputValue: string) => {
+    const newOption = { value: inputValue.toLowerCase(), label: inputValue };
+    setOptions(prevOptions => [...prevOptions, newOption]);
+    setSelectedOption(newOption);
+  };
+
+
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
@@ -106,15 +103,12 @@ export const Spelling = () => {
         <CreatableSelect
           options={options}
           value={selectedOption}
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          //@ts-ignore
           onChange={handleChange}
           onCreateOption={handleCreate}
           placeholder="Search and select or create a topic..."
         />
         {selectedOption && <div>You selected: {selectedOption.label}</div>}
       </div>
-
       <div className="grid max-w-lg grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
         {checkSpelling ? (
           <h1 className="col-span-2 -mb-6 mt-6 text-center text-lg font-bold text-blue-700 drop-shadow-lg">
@@ -125,18 +119,15 @@ export const Spelling = () => {
             Start your spelling practice
           </h1>
         )}
-
         {checkSpelling && (
           <SpellingComparison
             correctPhrase={cleanString(sentence?.phrase ?? "").split(" ")}
             missSpelledWords={comparisonResult?.missSpelledWords ?? []}
           />
         )}
-
         <div className="col-span-2 w-[100%]">
           <div className="relative w-full min-w-[200px]">
             <textarea
-              type="text"
               value={userInput}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               //@ts-ignore
@@ -152,11 +143,8 @@ export const Spelling = () => {
             </label>
           </div>
         </div>
-
         <DifficultySelect difficulty={difficulty} onChange={setDifficulty} />
-
         <SpeakButton text={sentence?.phrase} />
-
         <IconButton onClick={handleButtonClick} color="green">
           Generate New Sentence
           <RiArrowRightSLine className="text-white" />
@@ -165,3 +153,5 @@ export const Spelling = () => {
     </div>
   );
 };
+
+export default Spelling;
