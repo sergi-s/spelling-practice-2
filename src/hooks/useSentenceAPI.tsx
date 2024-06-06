@@ -8,6 +8,7 @@ export const useSentenceAPI = () => {
     const fetchNewSentence = async (difficulty?: number, topic?: string, wrongSpelling?: Array<string> | null) => {
 
         try {
+            console.log("Fetching new sentence");
 
             wrongSpelling = wrongSpelling?.filter(w => w.length > 0);
             const sentenceIds: string[] = JSON.parse(localStorage.getItem('sentenceIds') ?? '[]') as string[];
