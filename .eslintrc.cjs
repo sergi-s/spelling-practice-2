@@ -14,6 +14,7 @@ const config = {
     "plugin:@typescript-eslint/stylistic-type-checked"
   ],
   "rules": {
+    "react-hooks/exhaustive-deps": 'warn',
     "@typescript-eslint/ban-ts-comment": [
       "error",
       {

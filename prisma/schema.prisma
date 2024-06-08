@@ -42,8 +42,8 @@ model User {
     emailVerified DateTime?
     image         String?
     sessions      Session[]
-    UserWord      UserWord[]
-    account       Account?
+    userWords     UserWord[]
+    Account       Account?
 }
 
 model VerificationToken {
@@ -55,15 +55,21 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
+model StemmedWord {
+    id    String @id @default(auto()) @map("_id") @db.ObjectId
+    stem  String @unique
+    words Word[]
+}
+
 model Word {
-    id              String     @id @default(auto()) @map("_id") @db.ObjectId
-    stemmedWord     String     @unique
-    representations String[]
-    createdAt       DateTime   @default(now())
-    updatedAt       DateTime   @updatedAt
-    phraseIDs       String[]   @db.ObjectId
-    categories      Phrase[]   @relation(fields: [phraseIDs], references: [id])
-    UserWord        UserWord[]
+    id            String       @id @default(auto()) @map("_id") @db.ObjectId
+    stemmedWordId String?      @db.ObjectId
+    stemmedWord   StemmedWord? @relation(fields: [stemmedWordId], references: [id])
+    createdAt     DateTime     @default(now())
+    updatedAt     DateTime     @updatedAt
+    phraseIDs     String[]     @db.ObjectId
+    categories    Phrase[]     @relation(fields: [phraseIDs], references: [id])
+    userWords     UserWord[]
 }
 
 model Phrase {
@@ -81,10 +87,10 @@ model Phrase {
 
 model UserWord {
     id                String @id @default(auto()) @map("_id") @db.ObjectId
-    word              Word   @relation(fields: [wordId], references: [id])
     wordId            String @db.ObjectId
-    user              User   @relation(fields: [userId], references: [id])
+    word              Word   @relation(fields: [wordId], references: [id])
     userId            String @db.ObjectId
+    user              User   @relation(fields: [userId], references: [id])
     encounters        Int    @default(0)
     correctEncounters Int    @default(0)
 }

@@ -1,12 +1,8 @@
-// SpeakButton.tsx
 import React from "react";
 import { useSpeechSynthesis } from "react-speech-kit";
+import IconButton from "./IconButton";
 
-type SpeakButtonProps = {
-  text?: string;
-};
-
-export const SpeakButton = ({ text }: SpeakButtonProps) => {
+export const SpeakButton = ({ text }: { text?: string; }) => {
   const { speak } = useSpeechSynthesis();
 
   const handleSpeak = () => {
@@ -16,8 +12,8 @@ export const SpeakButton = ({ text }: SpeakButtonProps) => {
   };
 
   return (
-    <button onClick={handleSpeak}>
+    <IconButton onClick={handleSpeak} color="blue">
       Speak
-    </button>
+    </IconButton>
   );
 };

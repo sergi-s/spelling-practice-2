@@ -1,6 +1,7 @@
+//! NOTE: old should be deleted
 import { useState, useEffect } from 'react';
 
-export const useSentenceAPI = () => {
+export const useSentence = () => {
 
     const [sentence, setSentence] = useState<{ phrase: string, id: string }>();
 

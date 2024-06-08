@@ -1,71 +1,66 @@
 "use client"
-import React, { type ChangeEvent, useEffect, useState, type KeyboardEvent } from "react";
-import { useSentenceAPI } from "~/hooks/useSentenceAPI";
-import { SpeakButton } from "~/app/components/SpeakButton"; // Ensure this path is correct
-import { useKeyboardShortcuts } from "~/app/components/useKeyboardShortcuts"; // Ensure this path is correct
+import React, { type ChangeEvent, useState, type KeyboardEvent } from "react";
+import { useSentence } from "~/hooks/useSentenceAPI";
+import { SpeakButton } from "~/app/components/SpeakButton";
+import { useKeyboardShortcuts } from "~/app/components/useKeyboardShortcuts";
+
 import { DifficultySelect } from "./DifficultySelect";
 import { SpellingComparison } from "./SpellingComparison";
 import { RiArrowRightSLine } from "react-icons/ri";
-import IconButton from "~/app/components/IconButton"; // Ensure this path is correct
+import IconButton from "~/app/components/IconButton";
 import { ShortcutInstructions } from "~/app/components/ShortcutInstructions";
-import CreatableSelect from "react-select/creatable";
 import { cleanString } from "../utils/NLP/cleanStrings";
+import { useSpeechSynthesis } from "react-speech-kit";
+import type { TopicOption } from "types/types";
+import { TopicsSelect } from "../components/TopicsSelect";
+
 
 export const Spelling = () => {
-  const { sentence, fetchNewSentence } = useSentenceAPI();
+  const { speak, cancel } = useSpeechSynthesis()
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { sentence, fetchNewSentence } = useSentence();
   const [userInput, setUserInput] = useState<string>("");
   const [difficulty, setDifficulty] = useState<number>(1);
   const [comparisonResult, setComparisonResult] = useState<{
     correct: boolean;
     missSpelledWords: string[];
   } | null>(null);
+
   const [checkSpelling, setCheckSpelling] = useState<boolean>(false);
-  const [options, setOptions] = useState<Array<{ value: string; label: string }>>([]);
-  const [selectedOption, setSelectedOption] = useState<{ value: string; label: string } | null>(null);
   const [storeWrongSpelling, setStoreWrongSpelling] = useState<string[]>([]);
 
-  const { registerShortcut, speak } = useKeyboardShortcuts();
+  const [selectedOption, setSelectedOption] = useState<TopicOption | null>(null);
 
-  useEffect(() => {
-    const fetchTopics = async () => {
-      try {
-        const response = await fetch("/api/topics");
-        const uniqueTopics = await response.json();
-        setOptions(uniqueTopics.map((topic: string) => ({ value: topic, label: topic })));
-      } catch (error) {
-        console.error("Error fetching topics:", error);
-      }
-    };
-    fetchTopics();
-  }, []);
+  const handleOptionChange = (selectedValue: TopicOption) => {
+    setSelectedOption(selectedValue);
+  };
 
   const handleButtonClick = () => {
-    console.log("button clicked");
     void fetchNewSentence(difficulty, selectedOption?.value, storeWrongSpelling);
     setCheckSpelling(false);
     setUserInput("");
-    speak({ text: sentence?.phrase ?? "" }); // Correctly pass object to speak
+    speak({ text: sentence?.phrase ?? "" });
   };
 
 
-  const generateNewSentence =  () => { 
+  const generateNewSentence = () => {
     void fetchNewSentence(difficulty, selectedOption?.value, storeWrongSpelling);
+    console.log("YARAAAAB", sentence?.phrase)
     setCheckSpelling(false);
     setUserInput("");
-    setTimeout(()=>{speak({ text: sentence?.phrase ?? "" })},0); // Correctly pass object to speak
+    cancel();
+    setTimeout(() => { cancel(); speak({ text: sentence?.phrase ?? "there is nothing to say" }) }, 0);
   };
 
-
-
-  [difficulty, selectedOption, storeWrongSpelling, sentence, speak, registerShortcut];
-  registerShortcut({ key: ["Digit2","2"], callback: generateNewSentence });
-  registerShortcut({ key: ["Digit1","1"], callback: () => speak({ text: sentence?.phrase ?? "" }) });
+  useKeyboardShortcuts({ key: ["Digit2", "2"], callback: generateNewSentence });
+  useKeyboardShortcuts({ key: ["Digit1", "1"], callback: () => { cancel(); speak({ text: sentence?.phrase ?? "" }) } });
 
 
 
   // Handles changes to the textarea
   const handleInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    setUserInput(event.target.value.replace("\n", ' '));
+    setUserInput(event.target.value.replace("\n", '').replace('1', '').replace('2', ''));
   };
 
   // Handles key presses in the textarea
@@ -82,18 +77,6 @@ export const Spelling = () => {
   };
 
 
-  const handleChange = (newValue: any) => {
-    setSelectedOption(newValue);
-  };
-
-  const handleCreate = (inputValue: string) => {
-    const newOption = { value: inputValue.toLowerCase(), label: inputValue };
-    setOptions(prevOptions => [...prevOptions, newOption]);
-    setSelectedOption(newOption);
-  };
-
-
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
       <h1 className="col-span-2 mb-6 mt-6 text-center text-3xl font-bold bg-gradient-to-r from-cyan-500 to-blue-500 drop-shadow-lg text-transparent bg-clip-text">
@@ -101,15 +84,11 @@ export const Spelling = () => {
       </h1>
       <ShortcutInstructions />
       <div className="container m-2 p-2">
-        <CreatableSelect
-          options={options}
-          value={selectedOption}
-          onChange={handleChange}
-          onCreateOption={handleCreate}
-          placeholder="Search and select or create a topic..."
-        />
+        <h1>Topics Selection</h1>
+        <TopicsSelect onOptionChange={handleOptionChange} />
         {selectedOption && <div>You selected: {selectedOption.label}</div>}
       </div>
+
       <div className="grid max-w-lg grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
         {checkSpelling ? (
           <h1 className="col-span-2 -mb-6 mt-6 text-center text-lg font-bold text-blue-700 drop-shadow-lg">
@@ -130,11 +109,7 @@ export const Spelling = () => {
           <div className="relative w-full min-w-[200px]">
             <textarea
               value={userInput}
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              //@ts-ignore
               onChange={handleInputChange}
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              //@ts-ignore
               onKeyDown={handleInputSubmit}
               className="border-blue-gray-200 text-blue-gray-700 placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 disabled:bg-blue-gray-50 peer h-full min-h-[100px] w-full resize-none rounded-[7px] border border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal outline outline-0 transition-all placeholder-shown:border focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:resize-none disabled:border-0"
               placeholder=" "
@@ -146,7 +121,7 @@ export const Spelling = () => {
         </div>
         <DifficultySelect difficulty={difficulty} onChange={setDifficulty} />
         <SpeakButton text={sentence?.phrase} />
-        <IconButton onClick={handleButtonClick} color="green">
+        <IconButton onClick={handleButtonClick} color="red">
           Generate New Sentence
           <RiArrowRightSLine className="text-white" />
         </IconButton>
