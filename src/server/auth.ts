@@ -1,11 +1,12 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import {
+  type DefaultUser,
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
 } from "next-auth";
 import { type Adapter } from "next-auth/adapters";
-import DiscordProvider from "next-auth/providers/discord";
+import GoogleProvider, { type GoogleProfile } from "next-auth/providers/google";
 
 import { env } from "~/env";
 import { db } from "~/server/db";
@@ -20,15 +21,21 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"];
+      role: string;
+    } & DefaultSession['user'];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User extends DefaultUser {
+    id: string;
+    role: string;
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    id: string;
+    role: string;
+  }
 }
 
 /**
@@ -38,19 +45,40 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    session: ({ session, token }) => {
+      if (token) {
+        session.user.id = token.id;
+        session.user.role = token.role;
+      }
+      return session;
+    },
+    jwt: ({ token, user }) => {
+      if (user) {
+        token.role = user.role;
+        token.id = user.id;
+      }
+      return token;
+    }
   },
   adapter: PrismaAdapter(db) as Adapter,
   providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID ?? "DISCORD_CLIENT_ID id",
-      clientSecret: env.DISCORD_CLIENT_SECRET ?? "DISCORD_CLIENT_SECRET",
+    GoogleProvider({
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
+      async profile(profile: GoogleProfile) {
+
+        let userRole = "Google user";
+        if (profile?.email === "sergisamirboules@gmail.com") {
+          userRole = "admin";
+        }
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture,
+          role: userRole,
+        };
+      }
     }),
     /**
      * ...add more providers here.
@@ -70,3 +98,4 @@ export const authOptions: NextAuthOptions = {
  * @see https://next-auth.js.org/configuration/nextjs
  */
 export const getServerAuthSession = () => getServerSession(authOptions);
+
