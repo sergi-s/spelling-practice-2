@@ -1,9 +1,10 @@
 import { join } from "path";
 import { WordTokenizer } from "natural";
 import * as fs from 'fs';
+import { env } from "process";
 
 // Use process.cwd() to get the absolute path to the current working directory
-const corpusDirectory = join(process.cwd(), 'brown');
+const corpusDirectory = env.NODE_ENV == "production" ? "/vercel/path0/brown" : join(process.cwd(), 'brown');
 
 // Create a tokenizer instance
 const tokenizer = new WordTokenizer();
