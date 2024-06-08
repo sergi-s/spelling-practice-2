@@ -10,7 +10,8 @@
     "dev": "next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "add:corps:brown": "chmod +x install_brown.sh && ./install_brown.sh"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^1.4.0",
