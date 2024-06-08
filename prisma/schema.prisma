@@ -63,6 +63,7 @@ model StemmedWord {
 
 model Word {
     id            String       @id @default(auto()) @map("_id") @db.ObjectId
+    word          String       @unique
     stemmedWordId String?      @db.ObjectId
     stemmedWord   StemmedWord? @relation(fields: [stemmedWordId], references: [id])
     createdAt     DateTime     @default(now())
