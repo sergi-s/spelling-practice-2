@@ -27,7 +27,7 @@ const SpellingFreePage = () => {
             </h1>
             <ShortcutInstructions />
 
-            <TopicsSelect onOptionChange={setSelectedOption} />
+            <TopicsSelect authed={false} onOptionChange={setSelectedOption} />
 
             <SentenceComponent
                 currentSentence={currentSentence!}

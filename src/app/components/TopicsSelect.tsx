@@ -2,8 +2,9 @@ import React from 'react';
 import CreatableSelect from 'react-select/creatable';
 import { type TopicOption } from 'types/types';
 import useTopicsSelect from '../../hooks/useTopicsSelect';
+export const TopicsSelect = ({ authed, onOptionChange }: { authed: boolean, onOptionChange: (selectedValue: TopicOption) => void; }) => {
 
-export const TopicsSelect = ({ onOptionChange }: { onOptionChange: (selectedValue: TopicOption) => void; }) => {
+
     const {
         options,
         error,
@@ -13,6 +14,7 @@ export const TopicsSelect = ({ onOptionChange }: { onOptionChange: (selectedValu
         handleCreate
     } = useTopicsSelect();
 
+
     const handleSelectChange = (selectedValue: TopicOption | null) => {
         handleChange(selectedValue);
         if (selectedValue) {
@@ -21,8 +23,7 @@ export const TopicsSelect = ({ onOptionChange }: { onOptionChange: (selectedValu
     };
 
     const handleSelectCreate = (inputValue: string) => {
-        // handleCreate(inputValue);
-        alert("You are adding a new Topic, Subscribe to add more")
+        if (!authed) alert("You are adding a new Topic, Login to add more")
         onOptionChange({ value: inputValue, label: inputValue });
     };
 

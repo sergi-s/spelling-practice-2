@@ -85,7 +85,7 @@ export const Spelling = () => {
       <ShortcutInstructions />
       <div className="container m-2 p-2">
         <h1>Topics Selection</h1>
-        <TopicsSelect onOptionChange={handleOptionChange} />
+        <TopicsSelect authed={true} onOptionChange={handleOptionChange} />
         {selectedOption && <div>You selected: {selectedOption.label}</div>}
       </div>
 

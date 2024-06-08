@@ -43,12 +43,13 @@ export async function trainOnMisspelledWords(misspelledWords: string[]) {
 
     if (!chosenWord) throw new Error("No chosen misspelled words found")
 
-    const word = await wordRepo.getWordByStem(chosenWord);
+    const word = getRandomElement(await wordRepo.getWordsByStem(chosenWord))
     if (!word) throw new Error(`how did you misspell a word not in our database =>${chosenWord}<=`)
 
-    const phrase = getRandomElement(await phraseRepo.getPhrasesByWord(word.id));
+    const phrase = getRandomElement(await phraseRepo.getPhrasesByWord(word?.id));
     if (!phrase || Math.random() < 0.5) {
-        const generatedSentence = await generateSentence(SentenceStrategy, [new WordSentenceStrategy(getRandomElement(word.representations) ?? word.stemmedWord)])
+        const temp = word.word
+        const generatedSentence = await generateSentence(SentenceStrategy, [new WordSentenceStrategy(temp)])
         if (!generatedSentence) throw new Error('Failed to fetch user');
         // return generatedSentence
         const savedPhrase = await saveGeneratedPhrase(1, Language.en, generatedSentence)
@@ -64,21 +65,15 @@ export async function saveGeneratedPhrase(difficulty: number, language: Language
         const sentenceAlreadyExists = await phraseRepo.findPhrasesByCompletePhrase(phrase)
         if (sentenceAlreadyExists) return sentenceAlreadyExists;
 
-        const englishWords = (await stem(phrase)).split(" ")
+        const words = extractWords(phrase)
+
         const wordIDs = [];
 
-        for await (const word of englishWords) {
+        for await (const word of words) {
 
-            let savedWord = await wordRepo.getWordByStem(word);
-
-            if (!savedWord) {
-                savedWord = await wordRepo.save(word, word)
-            } else if (!savedWord.representations.includes(word)) {
-                await wordRepo.update(word, word)
-            }
-
+            let savedWord = await wordRepo.getWord(word);
+            if (!savedWord) savedWord = await wordRepo.save({ stemmedWord: await stem(word), word })
             wordIDs.push(savedWord.id);
-
         }
 
         let isTopic
@@ -96,3 +91,11 @@ export async function saveGeneratedPhrase(difficulty: number, language: Language
         console.error('Error:', error);
     }
 }
+
+const extractWords = (str: string) => {
+    // Remove periods and single quotes using regex
+    const cleanedStr = str.replace(/[.'']/g, "");
+    // Split the string into words using space as a delimiter
+    const wordsArray = cleanedStr.split(" ");
+    return wordsArray;
+};

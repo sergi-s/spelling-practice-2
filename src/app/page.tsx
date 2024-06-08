@@ -1,15 +1,17 @@
-// "use client"
+import { getServerSession } from "next-auth";
 import { Nav } from "./components/Nav";
-// import { Spelling } from "~/app/spelling";
+import { authOptions } from "~/server/auth"
 import SpellingFreePage from "./FreeSpelling/Spelling";
+import Spelling from "./spelling";
 
-export default function HomePage() {
-
+export default async function HomePage() {
+  const session = await getServerSession(authOptions)
   return (
     <main className="flex min-h-screen flex-col items-center justify-center">
       <Nav />
       <div className="">
-        <SpellingFreePage />
+
+        {session ? <Spelling /> : <SpellingFreePage />}
       </div>
     </main>
   );

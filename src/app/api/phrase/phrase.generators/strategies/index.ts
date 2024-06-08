@@ -5,3 +5,9 @@ import { GemmaChatSentenceStrategy, GemmaTopicMessage, GemmaWordMessage } from "
 export const SentenceStrategy = env.NODE_ENV == "development" ? GeminiChatSentenceStrategy : GemmaChatSentenceStrategy
 export const TopicSentenceStrategy = env.NODE_ENV == "development" ? GeminiTopicMessage : GemmaTopicMessage
 export const WordSentenceStrategy = env.NODE_ENV == "development" ? GeminiWordMessage : GemmaWordMessage
+
+
+// import { OpenAIChatSentenceStrategy, OpenAITopicMessage } from "./openai";
+// export const SentenceStrategy = OpenAIChatSentenceStrategy
+// export const TopicSentenceStrategy = OpenAITopicMessage
+// export const WordSentenceStrategy = OpenAITopicMessage
