@@ -1,13 +1,9 @@
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import { join } from "path";
 import { WordTokenizer } from "natural";
 import * as fs from 'fs';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-// Assuming you have extracted the Brown Corpus files in a directory named
-const corpusDirectory = join(__dirname, "../../../../brown");
-
+// Use process.cwd() to get the absolute path to the current working directory
+const corpusDirectory = join(process.cwd(), 'brown');
 
 // Create a tokenizer instance
 const tokenizer = new WordTokenizer();
