@@ -12,6 +12,8 @@ CURRENT_DIR=$(pwd)
 # Define the absolute path for extraction
 EXTRACTION_PATH="$CURRENT_DIR/$FOLDER_NAME"
 
+rm -rf "$EXTRACTION_PATH"
+
 # Download the zip file using curl
 curl -o "$FOLDER_NAME.zip" "$ZIP_URL"
 
