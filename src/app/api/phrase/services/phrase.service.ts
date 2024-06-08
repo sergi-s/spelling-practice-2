@@ -3,12 +3,11 @@ import { getRandomElement } from '~/app/utils/random/chooseRandomElement';
 import { stem } from '../../stemmer/service';
 import { Language } from '../../stemmer/validation';
 import { generateSentence } from '../phrase.generators';
-import { GemmaChatSentenceStrategy, GemmaTopicMessage, GemmaWordMessage } from '../phrase.generators/strategies/gemma.2b.chat';
 
 import topicRepo from '../../topics/repositories/topicRepository';
 import phraseRepo from '../repositories/phraseRepository';
 import wordRepo from '../../word/repositories/wordRepository'
-import { GeminiChatSentenceStrategy, GeminiTopicMessage, GeminiWordMessage } from '../phrase.generators/strategies/gemini';
+import { SentenceStrategy, TopicSentenceStrategy, WordSentenceStrategy } from '../phrase.generators/strategies';
 
 
 export async function getRandomPhrasesNotInList(sentenceIds: string[], difficulty?: number, topic?: string) {
@@ -22,7 +21,7 @@ export async function getRandomPhrasesNotInList(sentenceIds: string[], difficult
         const phrasesCount = await phraseRepo.countPhrasesByCriteria({}, { difficulty, topic: { topic }, NOT: { id: { in: sentenceIds } } })
         // Generate a new sentence if we did not find any with the same topic
         if (!phrasesCount || !savedTopic) {
-            const phrase = await generateSentence(GeminiChatSentenceStrategy, [new GeminiTopicMessage(topic)]);
+            const phrase = await generateSentence(SentenceStrategy, [new TopicSentenceStrategy(topic)]);
             if (!phrase) throw new Error("sorry we ran into a problem")
             // return phrase
             const savedPhrase = await saveGeneratedPhrase(difficulty, Language.en, phrase, topic);
@@ -49,7 +48,7 @@ export async function trainOnMisspelledWords(misspelledWords: string[]) {
 
     const phrase = getRandomElement(await phraseRepo.getPhrasesByWord(word.id));
     if (!phrase || Math.random() < 0.5) {
-        const generatedSentence = await generateSentence(GeminiChatSentenceStrategy, [new GeminiWordMessage(getRandomElement(word.representations) ?? word.stemmedWord)])
+        const generatedSentence = await generateSentence(SentenceStrategy, [new WordSentenceStrategy(getRandomElement(word.representations) ?? word.stemmedWord)])
         if (!generatedSentence) throw new Error('Failed to fetch user');
         // return generatedSentence
         const savedPhrase = await saveGeneratedPhrase(1, Language.en, generatedSentence)

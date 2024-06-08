@@ -5,7 +5,7 @@ import { ConsoleOutput, StreamOutput } from "~/app/utils/outputs";
 
 const generateNSentences = async (): Promise<Response | void> => {
     const useConsole = false
-    const n = 10;
+    const n = 5;
     let logger: Logger;
     let response
     if (useConsole) {

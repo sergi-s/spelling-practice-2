@@ -43,8 +43,11 @@ export class GeminiChatSentenceStrategy implements SentenceGenerationStrategy {
                 role: "user",
                 parts: [{ text: prompt }],
             })
+
             const result = await chat.sendMessage(prompt);
+            
             const response = result.response;
+
             const generatedResponse = response.text();
 
             return generatedResponse.match(/"([^"]+)"/)?.[1];;

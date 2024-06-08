@@ -1,9 +1,8 @@
-import { GemmaChatSentenceStrategy, GemmaTopicMessage } from "./strategies/gemma.2b.chat";
 import { calculateSentenceDifficulty } from "~/app/utils/NLP/calculateDifficulty";
 import { getRandomElement } from "~/app/utils/random/chooseRandomElement";
 import type { Notify, SentenceContentBased, SentenceGenerationStrategy } from "./interfaces";
 import topicRepo from "../../topics/repositories/topicRepository";
-import { GeminiChatSentenceStrategy, GeminiTopicMessage } from "./strategies/gemini";
+import { SentenceStrategy, TopicSentenceStrategy } from "./strategies";
 
 
 
@@ -40,12 +39,11 @@ export const generateAndSaveSentence = async (n = 1, notify: Notify) => {
 
         const topic = getRandomElement(topics)
         const contentBased: SentenceContentBased[] = [
-            // new GemmaTopicMessage(topic)
-            new GeminiTopicMessage(topic)
+            new TopicSentenceStrategy(topic)
         ];
 
 
-        const phrase = await generateSentence(GeminiChatSentenceStrategy, contentBased);
+        const phrase = await generateSentence(SentenceStrategy, contentBased);
 
         if (!phrase) return notify.log("No sentence generated")
         notify.log(`Sentence ${i + 1}, calculated:${calculateSentenceDifficulty(phrase).toFixed(2)}, topic:${topic}`);

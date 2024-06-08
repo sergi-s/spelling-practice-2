@@ -1,6 +1,7 @@
-"use client"
-import { Spelling } from "~/app/spelling";
+// "use client"
 import { Nav } from "./components/Nav";
+// import { Spelling } from "~/app/spelling";
+import SpellingFreePage from "./FreeSpelling/Spelling";
 
 export default function HomePage() {
 
@@ -8,7 +9,7 @@ export default function HomePage() {
     <main className="flex min-h-screen flex-col items-center justify-center">
       <Nav />
       <div className="">
-        <Spelling />
+        <SpellingFreePage />
       </div>
     </main>
   );
