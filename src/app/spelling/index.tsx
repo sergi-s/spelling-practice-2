@@ -1,3 +1,4 @@
+"use client"
 import React, { type ChangeEvent, useEffect, useState, type KeyboardEvent } from "react";
 import { useSentenceAPI } from "~/hooks/useSentenceAPI";
 import { SpeakButton } from "~/app/components/SpeakButton"; // Ensure this path is correct
