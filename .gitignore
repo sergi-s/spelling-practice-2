@@ -45,8 +45,8 @@ yarn-error.log*
 
 frequencyDocument.json
 
-brown/*
-!brown/.gitkeep
+public/corps/
+!public/corps/brown/.gitkeep
 
 
 .yarn
