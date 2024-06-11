@@ -1,10 +1,8 @@
-import { join } from "path";
 import { WordTokenizer } from "natural";
 import * as fs from 'fs';
-import { env } from "process";
 
 // Use process.cwd() to get the absolute path to the current working directory
-// const corpusDirectory = env.NODE_ENV == "production" ? "/vercel/path0/brown" : join(process.cwd(), 'brown');
+const corpusDirectory = "public/corps/brown"
 
 // Create a tokenizer instance
 const tokenizer = new WordTokenizer();
@@ -20,32 +18,32 @@ function isEnglishWord(word: string): boolean {
 }
 
 // Function to parse the Brown Corpus files and return the extracted data
-// export function tokenizeCorpus(): string[] {
-//     const result: string[] = [];
+export function tokenizeCorpus(): string[] {
+    const result: string[] = [];
 
-//     // Read each file in the corpus
-//     fs.readdirSync(corpusDirectory).forEach(file => {
-//         const data = fs.readFileSync(`${corpusDirectory}/${file}`, 'utf8');
+    // Read each file in the corpus
+    fs.readdirSync(corpusDirectory).forEach(file => {
+        const data = fs.readFileSync(`${corpusDirectory}/${file}`, 'utf8');
 
-//         // Split the data into lines
-//         const lines: string[] = data.split('\n');
+        // Split the data into lines
+        const lines: string[] = data.split('\n');
 
-//         // Process each line
-//         lines.forEach(line => {
-//             // Tokenize the line using the natural tokenizer
-//             const tokens: string[] = tokenizer.tokenize(line);
+        // Process each line
+        lines.forEach(line => {
+            // Tokenize the line using the natural tokenizer
+            const tokens: string[] = tokenizer.tokenize(line);
 
-//             // Filter out non-English words
-//             const englishTokens: string[] = tokens.filter(token => isEnglishWord(token));
+            // Filter out non-English words
+            const englishTokens: string[] = tokens.filter(token => isEnglishWord(token));
 
-//             // Extract relevant information from the tokens
-//             const words: string[] = englishTokens.map(token => token.toLowerCase()); // Convert to lowercase
+            // Extract relevant information from the tokens
+            const words: string[] = englishTokens.map(token => token.toLowerCase()); // Convert to lowercase
 
-//             // Add the extracted words to the result
-//             result.push(...words);
-//         });
-//     });
+            // Add the extracted words to the result
+            result.push(...words);
+        });
+    });
 
-//     return result;
-// }
+    return result;
+}
 
