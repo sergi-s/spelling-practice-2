@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import path from "path";
 
 // Use process.cwd() to get the absolute path to the current working directory
-const corpusDirectory = 'corps/brown';
+const corpusDirectory = '/vercel/path0/corps/brown';
 
 // Create a tokenizer instance
 const tokenizer = new WordTokenizer();
