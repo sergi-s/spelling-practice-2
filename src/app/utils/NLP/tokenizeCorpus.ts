@@ -1,8 +1,9 @@
 import { WordTokenizer } from "natural";
 import * as fs from 'fs';
+import path from "path";
 
 // Use process.cwd() to get the absolute path to the current working directory
-const corpusDirectory = "public/corps/brown"
+const corpusDirectory = path.join(process.cwd(), 'public/corps/brown');
 
 // Create a tokenizer instance
 const tokenizer = new WordTokenizer();

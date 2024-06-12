@@ -1,9 +1,9 @@
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import { WordTokenizer } from "natural";
-
+import path from "path";
 
 export function createFrequencyDocument(documents: string[]): Record<string, number> {
-    const outputFilePath = 'frequencyDocument.json';
+    const outputFilePath = path.join(process.cwd(), 'public/frequency', 'frequencyDocument.json');
 
     // Check if the JSON file exists
     if (existsSync(outputFilePath)) {
@@ -31,5 +31,4 @@ export function createFrequencyDocument(documents: string[]): Record<string, num
     // Write the JSON string to a file
     writeFileSync(outputFilePath, JSON.stringify(wordFrequency), 'utf8');
     return wordFrequency;
-
 }
