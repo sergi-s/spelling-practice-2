@@ -1,10 +1,15 @@
-import { tokenizeCorpus } from '../utils/NLP/tokenizeCorpus';
-import { createFrequencyDocument } from '../utils/NLP/createFrequencyDocument';
 import { db } from '~/server/db';
+import { promises } from 'fs';
 
 
 export const prisma = db
 
-
-export const documents: string[] = tokenizeCorpus();
-export const wordFrequencyScores: Record<string, number> = createFrequencyDocument(documents);
+export const wordFrequencyScores = async (): Promise<Record<string, number>> => {
+    try {
+        const data = await promises.readFile("./public/frequency/frequencyDocument.json", 'utf8');
+        return JSON.parse(data) as Record<string, number>;
+    } catch (error) {
+        console.error('Error loading JSON file:', error);
+        throw error;
+    }
+}
