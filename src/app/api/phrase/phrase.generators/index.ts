@@ -46,7 +46,7 @@ export const generateAndSaveSentence = async (n = 1, notify: Notify) => {
         const phrase = await generateSentence(SentenceStrategy, contentBased);
 
         if (!phrase) return notify.log("No sentence generated")
-        notify.log(`Sentence ${i + 1}, calculated:${calculateSentenceDifficulty(phrase).toFixed(2)}, topic:${topic}`);
+        notify.log(`Sentence ${i + 1}, calculated:${(await calculateSentenceDifficulty(phrase)).toFixed(2)}, topic:${topic}`);
 
         // const savedPhrase = await saveGeneratedPhrase(difficulty, language, phrase, topic);
         // if (!savedPhrase) return notify.log("The sentence was not saved")
