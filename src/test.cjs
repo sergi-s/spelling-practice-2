@@ -12,7 +12,7 @@ const FOLDER_NAME = "brown";
 const CURRENT_DIR = process.cwd();
 
 // Define the absolute path for extraction in the public directory
-const PUBLIC_DIR = `${CURRENT_DIR}/public/corps`;
+const PUBLIC_DIR = `./public/corps`;
 const EXTRACTION_PATH = `${PUBLIC_DIR}/${FOLDER_NAME}`;
 
 // Create the public directory if it doesn't exist

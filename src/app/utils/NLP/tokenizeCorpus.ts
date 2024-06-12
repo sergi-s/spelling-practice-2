@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import path from "path";
 
 // Use process.cwd() to get the absolute path to the current working directory
-const corpusDirectory = path.join(process.cwd(), 'public/corps/brown');
+const corpusDirectory = './public/corps/brown';
 
 // Create a tokenizer instance
 const tokenizer = new WordTokenizer();
