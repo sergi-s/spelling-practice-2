@@ -9,18 +9,23 @@ FOLDER_NAME="brown"
 # Get the absolute path of the current directory
 CURRENT_DIR=$(pwd)
 
-# Define the absolute path for extraction
-EXTRACTION_PATH="$CURRENT_DIR/$FOLDER_NAME"
+# Define the absolute path for extraction in the public directory
+PUBLIC_DIR="$CURRENT_DIR/public/corps"
+EXTRACTION_PATH="$PUBLIC_DIR/$FOLDER_NAME"
 
+# Create the public directory if it doesn't exist
+mkdir -p "$PUBLIC_DIR"
+
+# Remove any existing folder with the same name
 rm -rf "$EXTRACTION_PATH"
 
 # Download the zip file using curl
-curl -o "$FOLDER_NAME.zip" "$ZIP_URL"
+curl -o "$PUBLIC_DIR/$FOLDER_NAME.zip" "$ZIP_URL"
 
 # Check if download was successful
 if [ $? -eq 0 ]; then
     # Extract the contents of the zip file to the specified directory
-    unzip "$FOLDER_NAME.zip" -d "$CURRENT_DIR"
+    unzip "$PUBLIC_DIR/$FOLDER_NAME.zip" -d "$PUBLIC_DIR"
     # Check if extraction was successful
     if [ $? -eq 0 ]; then
         echo "Extraction successful. Files are located in the directory: $EXTRACTION_PATH"
@@ -30,7 +35,7 @@ if [ $? -eq 0 ]; then
         echo "Error: Extraction failed."
     fi
     # Clean up: Remove the downloaded zip file
-    rm "$FOLDER_NAME.zip"
+    rm "$PUBLIC_DIR/$FOLDER_NAME.zip"
 else
     echo "Error: Download failed. Please check the URL and try again."
 fi
