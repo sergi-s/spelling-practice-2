@@ -10,21 +10,11 @@ const path = require("path");
  * @returns {Record<string,number>}
  */
 function createFrequencyDocument(documents) {
-  console.log("I WILL SAVE TO FILE");
   const outputFilePath = path.join(
     process.cwd(),
     "public/frequency",
     "frequencyDocument.json",
   );
-
-  // // Check if the JSON file exists
-  // if (existsSync(outputFilePath)) {
-  //   // Load and parse the existing JSON file
-  //   const fileContent = readFileSync(outputFilePath, "utf8");
-  //   /**@type {Record<string,number>} */
-  //   const data = JSON.parse(fileContent);
-  //   return data;
-  // }
 
   // Calculate word frequency if the file doesn't exist
   /**@type {Record<string,number>} */
@@ -48,4 +38,47 @@ function createFrequencyDocument(documents) {
   return wordFrequency;
 }
 
-module.exports = { createFrequencyDocument };
+/**
+ * @param {string[]} documents
+ */
+function createInvertedFrequencyDocument(documents) {
+  // Use the provided function to create the frequency document
+  const frequencyDocument = createFrequencyDocument(documents);
+
+  const invertedFrequencyScores = getInvertedFrequencyScores(frequencyDocument);
+
+  // Optionally, save the inverted frequency scores to a file
+  const outputFilePath = path.join(
+    process.cwd(),
+    "public/frequency",
+    "invertedFrequencyDocument.json",
+  );
+  writeFileSync(
+    outputFilePath,
+    JSON.stringify(invertedFrequencyScores),
+    "utf8",
+  );
+
+  return invertedFrequencyScores;
+}
+
+/**
+ * @param { Record<string, number>} frequencyDocument
+ * @returns { Record<string, number>}
+ */
+function getInvertedFrequencyScores(frequencyDocument) {
+  // Calculate the inverted frequency scores
+  /** @type {Record<string, number>} */
+  const invertedFrequencyScores = {};
+  for (const [word, freq] of Object.entries(frequencyDocument)) {
+    invertedFrequencyScores[word] = 1 / freq;
+  }
+  return invertedFrequencyScores;
+}
+
+
+module.exports = {
+  createFrequencyDocument,
+  invertedFrequencyScores: getInvertedFrequencyScores,
+  createInvertedFrequencyDocument,
+};
