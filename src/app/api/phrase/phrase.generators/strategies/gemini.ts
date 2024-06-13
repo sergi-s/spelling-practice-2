@@ -53,11 +53,11 @@ export class GeminiChatSentenceStrategy implements SentenceGenerationStrategy {
             // Calculate the total number of tokens in the chat history
             let totalTokens = await countTokens(localHistory);
 
-            // If total tokens exceed 10,000, remove the first element until it's below 10,000
-            // while (totalTokens > 10000) {
-            //     localHistory.shift();
-            //     totalTokens = await countTokens(localHistory);
-            // }
+            // If total tokens exceed 10,000,000 remove the first element until it's below 10,000
+            while (totalTokens > 10000000) {
+                localHistory.shift();
+                totalTokens = await countTokens(localHistory);
+            }
             console.debug(`localHistory size is ${localHistory.length}, number of tokens:${totalTokens}`)
 
             const result = await chat.sendMessage(prompt);
