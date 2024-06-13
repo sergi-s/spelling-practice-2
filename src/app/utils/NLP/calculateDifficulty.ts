@@ -5,7 +5,7 @@ import { wordFrequencyScores } from '../../api/globalVariables';
 
 const averageWordLength = 5;
 
-export function calculateSentenceDifficulty(sentence: string): number {
+export async function calculateSentenceDifficulty(sentence: string): Promise<number> {
     const doc = nlp(sentence);
     const words = (doc.terms().out('array') as string[]).map((word: string) => word.replace(/[^\w\s]/gi, '')).filter(Boolean);
 
@@ -19,7 +19,7 @@ export function calculateSentenceDifficulty(sentence: string): number {
     const maxSyllableScores: number = Math.max(...syllableScores);
     // const avgSyllableScore: number = syllableScores.reduce((a, b) => a + b, 0) / syllableScores.length;
 
-    const frequencyScore = normalizeFrequencyScore(wordFrequencyScores, words)
+    const frequencyScore = normalizeFrequencyScore(await wordFrequencyScores(), words)
     // Combine Scores
     // TODO: flow this = > https://youtube.com/playlist?list=PL8dPuuaLjXtP5mp25nStsuDzk2blncJDW&si=QXQJncuzNDYwFcP4
     const difficultyScore: number = (frequencyScore + maxLengthScore + maxSyllableScores);
