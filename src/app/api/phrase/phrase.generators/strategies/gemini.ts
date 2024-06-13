@@ -1,6 +1,5 @@
 import type { SentenceGenerationStrategy, SentenceContentBased } from "../interfaces";
-
-import { GoogleGenerativeAI, type Content } from "@google/generative-ai"
+import { GoogleGenerativeAI, type Content } from "@google/generative-ai";
 import { generateRandomLong } from "~/app/utils/random/randomLong";
 import { env } from "~/env";
 
@@ -12,17 +11,23 @@ const model = genAI.getGenerativeModel({
 
 const localHistory: Content[] = [];
 
+async function countTokens(contents: Content[]): Promise<number> {
+    const req = { contents };
+    const countTokensResp = await model.countTokens(req);
+    return countTokensResp.totalTokens;
+}
+
 export class GeminiTopicMessage implements SentenceContentBased {
     public content: string;
     constructor(message: string) {
-        this.content = `The sentence's topic should be ${message}`
+        this.content = `The sentence's topic should be ${message}`;
     }
 }
 
 export class GeminiWordMessage implements SentenceContentBased {
     public content: string;
     constructor(message: string) {
-        this.content = `the sentence should contain the word ${message}`
+        this.content = `the sentence should contain the word ${message}`;
     }
 }
 
@@ -37,23 +42,35 @@ export class GeminiChatSentenceStrategy implements SentenceGenerationStrategy {
                     temperature: 1,
                 },
             });
+
             const prompt = `use ${generateRandomLong()} as a seed \n${contentMessages.map(({ content }) => content).join(", ")}`;
 
             localHistory.push({
                 role: "user",
                 parts: [{ text: prompt }],
-            })
+            });
+
+            // Calculate the total number of tokens in the chat history
+            let totalTokens = await countTokens(localHistory);
+
+            // If total tokens exceed 10,000, remove the first element until it's below 10,000
+            // while (totalTokens > 10000) {
+            //     localHistory.shift();
+            //     totalTokens = await countTokens(localHistory);
+            // }
+            console.debug(`localHistory size is ${localHistory.length}, number of tokens:${totalTokens}`)
 
             const result = await chat.sendMessage(prompt);
-            
+
             const response = result.response;
 
             const generatedResponse = response.text();
 
-            return generatedResponse.match(/"([^"]+)"/)?.[1];;
+            return generatedResponse.match(/"([^"]+)"/)?.[1];
 
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error:');
+            console.dir({ error }, { depth: null })
         }
     }
 }

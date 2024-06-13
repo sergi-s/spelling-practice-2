@@ -1,50 +1,54 @@
 
 import nlp from 'compromise';
 import { syllable } from 'syllable';
-import { wordFrequencyScores } from '../../api/globalVariables';
+import { updateWordFrequencyScores, wordFrequencyScores } from '../../api/globalVariables';
 
-const averageWordLength = 5;
+const MAX_WORD_LENGTH = 45; // max is: "pneumonoultramicroscopicsilicovolcanoconiosis"
+const MAX_SYLLABLE_COUNT = 14; // max is: "pneumonoultramicroscopicsilicovolcanoconiosis"
+const MAX_FREQUENCY_SCORE = 1; // inverted frequency score is between 0 and 1
 
-export async function calculateSentenceDifficulty(sentence: string): Promise<number> {
+export async function calculateSentenceDifficulty(sentence: string) {
     const doc = nlp(sentence);
-    const words = (doc.terms().out('array') as string[]).map((word: string) => word.replace(/[^\w\s]/gi, '')).filter(Boolean);
+    const words = (doc.terms().out('array') as string[])
+        .map((word: string) => word.replace(/[^\w\s]/gi, '').toLowerCase())
+        .filter(Boolean).filter((w) => w.length > 1);
 
-    // Word Length Score
-    const lengthScores: number[] = words.map(word => Math.abs(word.length - averageWordLength));
-    const maxLengthScore: number = Math.max(...lengthScores);
+    // Length Scores
+    const normalizedMaxLengthScore: number = Math.max(...words.map((word) => word.length / MAX_WORD_LENGTH));
 
-
-    // Syllable Count Score
+    // Syllable Scores
     const syllableScores: number[] = words.map(word => syllable(word));
     const maxSyllableScores: number = Math.max(...syllableScores);
-    // const avgSyllableScore: number = syllableScores.reduce((a, b) => a + b, 0) / syllableScores.length;
+    const normalizedMaxSyllableScore: number = maxSyllableScores / MAX_SYLLABLE_COUNT;
 
-    const frequencyScore = normalizeFrequencyScore(await wordFrequencyScores(), words)
-    // Combine Scores
-    // TODO: flow this = > https://youtube.com/playlist?list=PL8dPuuaLjXtP5mp25nStsuDzk2blncJDW&si=QXQJncuzNDYwFcP4
-    const difficultyScore: number = (frequencyScore + maxLengthScore + maxSyllableScores);
+    // Frequency Scores
+    const { frequency, invertedFrequency } = await wordFrequencyScores();
+    await updateFrequencyDoc(frequency, words);
+    const frequencyScore = normalizeFrequencyScore(invertedFrequency, words);
+    const normalizedFrequencyScore: number = frequencyScore / MAX_FREQUENCY_SCORE;
 
-    // console.log({ sentence, len: { lengthScores, maxLengthScore }, syl: { syllableScores, maxSyllableScores }, freq: { words, frequencyScore } })
-    return difficultyScore;
+    // Combined Difficulty Score
+    const difficultyScore: number = (normalizedFrequencyScore + normalizedMaxLengthScore + normalizedMaxSyllableScore) / 3;
+
+    return { difficultyScore, frequencyScore: normalizedFrequencyScore, lengthScore: normalizedMaxLengthScore, syllable: normalizedMaxSyllableScore };
 }
 
 
-function normalizeFrequencyScore(wordFrequencyScores: Record<string, number>, words: string[]): number {
-    // Calculate the maximum frequency score
-    const maxFrequencyScore = Math.max(...Object.values(wordFrequencyScores));
-
-    // Calculate the inverted frequency scores
-    const invertedFrequencyScores: number[] = words.map(word => maxFrequencyScore - (wordFrequencyScores[word] ?? 0));
-    // console.log({ sad: words.map((word) => ({ word, freq: wordFrequencyScores[word] })) })
-    // Calculate the sum of the inverted frequency scores
-    const sumOfInvertedScores: number = invertedFrequencyScores.reduce((sum, score) => sum + score, 0);
-
-    // Normalize the inverted frequency scores
-    const normalizedFrequencyScores: number[] = invertedFrequencyScores.map(score => score / sumOfInvertedScores);
-
-    // Calculate the overall normalized frequency score
-    const normalizedFrequencyScore: number = normalizedFrequencyScores.reduce((sum, score) => sum + score, 0) / words.length;
-
-    return normalizedFrequencyScore;
+function normalizeFrequencyScore(invertedFrequencyScores: Record<string, number>, words: string[]) {
+    const debug = {}
+    const scores = words.map((word) => {
+        debug[word] = invertedFrequencyScores[word] ?? 1
+        if (invertedFrequencyScores[word]) return invertedFrequencyScores[word]!
+        else { return 1 }
+    });
+    const maxScore = Math.max(...scores);
+    // console.log({ debug })
+    return maxScore;
 }
 
+// TODO: this should be moved
+async function updateFrequencyDoc(frequency: Record<string, number>, words: string[]) {
+    // const unseenWords = words.filter((word) => !frequency[word])
+    words.forEach((word) => frequency[word] ? frequency[word]++ : 1);
+    await updateWordFrequencyScores(frequency)
+}

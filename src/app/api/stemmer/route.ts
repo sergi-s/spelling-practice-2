@@ -73,8 +73,8 @@ export const GET = async () => {
     const r: Record<string, number> = {} as Record<string, number>;
     for (const sentence of sentences) {
         const sentenceStr = sentence.phrase.replace(/[^a-zA-Z\s]/g, '').toLowerCase();
-        const difficultyScore: number = await calculateSentenceDifficulty(sentenceStr);
-        r[sentenceStr] = difficultyScore;
+        const difficultyScore = await calculateSentenceDifficulty(sentenceStr);
+        r[sentenceStr] = difficultyScore.difficultyScore;
         console.log("=============")
     }
     return NextResponse.json(Object.fromEntries(Object.entries(r).sort((a, b) => a[1] - b[1])))
