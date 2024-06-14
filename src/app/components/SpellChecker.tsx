@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 const SpellChecker = ({
     correctSentence, onWrongWordsChange, userInput, setUserInput, isSpellChecking, setIsSpellChecking
 }:
-{
-    correctSentence: string, onWrongWordsChange: (value: string[]) => void, userInput: string, setUserInput: (input: string) => void, isSpellChecking: boolean, setIsSpellChecking: (flag: boolean) => void
-}) => {
+    {
+        correctSentence: string, onWrongWordsChange: (value: string[]) => void, userInput: string, setUserInput: (input: string) => void, isSpellChecking: boolean, setIsSpellChecking: (flag: boolean) => void
+    }) => {
 
     const compareSentences = () => {
         const correctWords = correctSentence.split(/[ ,.'’]+/);
@@ -14,8 +14,8 @@ const SpellChecker = ({
 
         const result = [];
         for (let i = 0; i < maxLength; i++) {
-            const correctWord = correctWords[i] ? correctWords[i].toLowerCase() : '';
-            const userWord = userWords[i] ? userWords[i].toLowerCase() : '';
+            const correctWord = correctWords[i] ? correctWords[i]!.toLowerCase() : '';
+            const userWord = userWords[i] ? userWords[i]!.toLowerCase() : '';
 
             if (correctWord === userWord) {
                 result.push(<span key={i}>{correctWord}{' '}</span>);

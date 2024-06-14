@@ -2,6 +2,7 @@ import React from 'react';
 import CreatableSelect from 'react-select/creatable';
 import { type TopicOption } from 'types/types';
 import useTopicsSelect from '../../hooks/useTopicsSelect';
+import type { CSSObject } from 'styled-components';
 
 export const TopicsSelect = ({ authed, onOptionChange }: { authed: boolean, onOptionChange: (selectedValue: TopicOption) => void; }) => {
 
@@ -27,15 +28,17 @@ export const TopicsSelect = ({ authed, onOptionChange }: { authed: boolean, onOp
     };
 
     const customStyles = {
-        menu: (provided) => ({
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        menu: (provided: CSSObject) => ({
             ...provided,
-            zIndex: 9999 // High z-index to ensure overlay - Ensures most other actions cannot be performed while trying to use topic feature
+            zIndex: 9999
         }),
-        menuList: (provided) => ({
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        menuList: (provided: CSSObject) => ({
             ...provided,
             maxHeight: '400px' // Increase the height of the dropdown list
         })
-    };
+    }
 
     if (isLoading) {
         return <div>Loading...</div>;
@@ -48,12 +51,16 @@ export const TopicsSelect = ({ authed, onOptionChange }: { authed: boolean, onOp
     return (
         <div className="container m-2 p-1">
             <CreatableSelect
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 options={options}
                 value={selectedOption}
                 onChange={handleSelectChange}
                 onCreateOption={handleSelectCreate}
                 placeholder="Search and select or create a topic..."
-                styles={customStyles} // Apply custom styles here
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                styles={customStyles}
             />
             {selectedOption && <div>You selected: {selectedOption.label}</div>}
         </div>
