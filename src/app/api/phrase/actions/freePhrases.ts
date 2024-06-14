@@ -13,7 +13,6 @@ export async function getFreePhrases({ skip = 0, take = 10, topic, difficulty }:
     const phrases = await prisma.phrase.findMany({
       skip, take, where: whereClause
     });
-    console.table(phrases)
     return phrases;
   } catch (error) {
     console.error('Error fetching random sentence:', error);
