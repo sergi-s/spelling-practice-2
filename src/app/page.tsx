@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { Nav } from "./components/Nav";
 import { authOptions } from "~/server/auth"
-import SpellingFreePage from "./FreeSpelling/Spelling";
+import SpellingFreePage from "./FreeSpelling/freeindex";
 import Spelling from "./spelling";
 
 export default async function HomePage() {

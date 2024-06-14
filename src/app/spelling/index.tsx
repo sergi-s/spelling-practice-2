@@ -31,9 +31,15 @@ export const Spelling = () => {
   const [storeWrongSpelling, setStoreWrongSpelling] = useState<string[]>([]);
 
   const [selectedOption, setSelectedOption] = useState<TopicOption | null>(null);
+  const [showInstructions, setShowInstructions] = useState(false); // New state for instructions visibility
+
 
   const handleOptionChange = (selectedValue: TopicOption) => {
     setSelectedOption(selectedValue);
+  };
+
+  const toggleInstructions = () => {
+    setShowInstructions(!showInstructions);
   };
 
   const handleButtonClick = () => {
@@ -79,8 +85,8 @@ export const Spelling = () => {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
-      <h1 className="col-span-2 mb-6 mt-6 text-center text-3xl font-bold bg-gradient-to-r from-cyan-500 to-blue-500 drop-shadow-lg text-transparent bg-clip-text">
-        Start your spelling practice
+      <h1 className="col-span-2 mb-6 mt-6 text-center text-6xl font-bold bg-gradient-to-r from-cyan-500 to-blue-500 drop-shadow-lg text-transparent bg-clip-text">
+        LexIA
       </h1>
       <ShortcutInstructions />
       <div className="container m-2 p-2">
@@ -121,8 +127,8 @@ export const Spelling = () => {
         </div>
         <DifficultySelect difficulty={difficulty} onChange={setDifficulty} />
         <SpeakButton text={sentence?.phrase} />
-        <IconButton onClick={handleButtonClick} color="red">
-          Generate New Sentence
+        <IconButton onClick={handleButtonClick} color="gradient1">
+          Next
           <RiArrowRightSLine className="text-white" />
         </IconButton>
       </div>

@@ -20,16 +20,11 @@ const SentenceComponent = ({ currentSentence, handleNext, currentSentenceRef }: 
         <>
             {/* <p>{currentSentence.phrase}</p> */}
             <div className="grid max-w-lg grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
+  <IconButton color='gradient1' onClick={read}>Read</IconButton>
+  <IconButton onClick={next} color='gradient2'>Next <RiArrowRightSLine className="text-white" /></IconButton>
+</div>
 
-                <IconButton
-                    color='blue'
-                    onClick={read}
-                >Read</IconButton>
-                <IconButton onClick={next} color='red'> Next
-                    <RiArrowRightSLine className="text-white" />
-                </IconButton>
 
-            </div >
         </>
     );
 };

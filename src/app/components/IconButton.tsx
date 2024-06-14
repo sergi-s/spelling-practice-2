@@ -1,31 +1,23 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef } from 'react';
+import styles from './IconButton.module.css'; // Ensure this is the correct path
 
-// Define the props type for better type checking
 type IconButtonProps = {
   onClick: () => void;
-  color: "blue" | "green" | "red";
+  color: "gradient1" | "gradient2";
   children: React.ReactNode;
   id?: string;
 };
 
 const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
-  function IconButton({ onClick, color, children, id }, ref) {
-    // Secure way to handle dynamic colors with Tailwind
-    const colorClasses = {
-      blue: "bg-blue-400 hover:bg-blue-600",
-      green: "bg-green-400 hover:bg-green-600",
-      red: "bg-red-400 hover:bg-red-600",
-    };
-
-    // Fallback color if not specified or if the specified color isn't handled
-    const buttonClasses = colorClasses[color] || "bg-gray-400 hover:bg-gray-600";
+  ({ onClick, color, children, id }, ref) => {
+    const buttonClass = color === 'gradient1' ? styles.gradientButton1 : styles.gradientButton2;
 
     return (
       <button
         ref={ref}
         id={id}
         onClick={onClick}
-        className={`${buttonClasses} text-white font-bold py-2 px-4 rounded-full border-2 border-cyan-600 transition duration-300 ease-in-out flex items-center space-x-2 justify-center`}
+        className={`${styles.button} ${buttonClass} text-white font-bold py-2 px-4 rounded-full flex items-center space-x-2 justify-center`}
       >
         {children}
       </button>
