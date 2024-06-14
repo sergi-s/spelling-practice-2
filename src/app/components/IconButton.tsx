@@ -8,6 +8,7 @@ type IconButtonProps = {
   id?: string;
 };
 
+// eslint-disable-next-line react/display-name
 const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
   ({ onClick, color, children, id }, ref) => {
     const buttonClass = color === 'gradient1' ? styles.gradientButton1 : styles.gradientButton2;
