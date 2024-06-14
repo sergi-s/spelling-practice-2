@@ -8,12 +8,22 @@ const styles = {
         borderRadius: '20px',
         backgroundColor: '#e0e0e0',
         color: '#000',
+        cursor: 'pointer', // Makes it clear that the tags are interactable
     },
     blurred: {
         filter: 'blur(5px)',
     },
     clear: {
         filter: 'none',
+    },
+    toggleContainer: {
+        marginTop: '10px',
+        fontFamily: '"Arial", sans-serif',
+        fontSize: '16px',
+    },
+    checkbox: {
+        marginRight: '5px',
+        cursor: 'pointer', // Indicates that the checkbox is clickable
     },
 };
 
@@ -34,15 +44,21 @@ export const BlurToggleComponent = ({ words }: { words: string[] }) => {
                             ...styles.tag,
                             ...(!isBlurred ? styles.clear : styles.blurred),
                         }}
+                        onClick={handleToggle} // Allows toggling by clicking on the words too
                     >
                         {word}
                     </span>
                 ))}
             </div>
-            <div>
+            <div style={styles.toggleContainer}>
                 <label>
-                    <input type="checkbox" checked={!isBlurred} onChange={handleToggle} />
-                    Toggle Clear
+                    <input
+                        type="checkbox"
+                        style={styles.checkbox}
+                        checked={!isBlurred}
+                        onChange={handleToggle}
+                    />
+                    {isBlurred ? 'Un-blur Incorrect Words' : 'Blur Incorrect Words'}
                 </label>
             </div>
         </div>

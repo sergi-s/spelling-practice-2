@@ -1,5 +1,6 @@
 "use client"
 import React, { useState } from "react";
+import styles from './backgroundGradient.module.css';
 import { ShortcutInstructions } from "~/app/components/ShortcutInstructions";
 import { TopicsSelect } from "../components/TopicsSelect";
 import { type TopicOption } from "types/types";
@@ -24,9 +25,9 @@ const SpellingFreePage = () => {
     const handleWrongWordsChange = (words: string[]) => { setMisspelledWords(prev => [...new Set([...words, ...prev])]) };
 
     return (
-        <div className="flex min-h-screen flex-col items-center justify-center">
-            <h2 className="col-span-2 mb-6 mt-6 text-center text-3xl font-bold bg-gradient-to-r from-cyan-500 to-blue-500 drop-shadow-lg text-transparent bg-clip-text">
-                Start your spelling practice NOTE: {selectedOption?.value}
+        <div className={styles.pageContainer}>
+            <h2 className="col-span-2 mb-6 mt-6 text-center text-6xl font-bold bg-gradient-to-r from-cyan-500 to-blue-500 drop-shadow-lg text-transparent bg-clip-text">
+                LexIA {selectedOption?.value}
             </h2>
             <ShortcutInstructions />
 
