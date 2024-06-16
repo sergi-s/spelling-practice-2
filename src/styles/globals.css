@@ -21,3 +21,17 @@
         @apply absolute w-[calc(100%-8px)] h-[calc(100%-8px)] top-[4px] left-[4px] bg-gradient-to-b from-slate-100 to-slate-100 rounded-2xl;
     }
 }
+
+@keyframes glow {
+    0%, 100% {
+      text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #6a11cb, 0 0 40px #2575fc, 0 0 50px #2575fc, 0 0 60px #2575fc, 0 0 70px #2575fc;
+    }
+    50% {
+      text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
+    }
+  }
+  
+  .animated-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  

@@ -12,7 +12,7 @@ export const SpeakButton = ({ text }: { text?: string; }) => {
   };
 
   return (
-    <IconButton onClick={handleSpeak} color="blue">
+    <IconButton onClick={handleSpeak} color="gradient2">
       Speak
     </IconButton>
   );
