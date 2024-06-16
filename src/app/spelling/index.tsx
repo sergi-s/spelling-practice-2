@@ -1,5 +1,6 @@
 "use client"
 import React, { type ChangeEvent, useState, type KeyboardEvent } from "react";
+import styles from '../components/backgroundGradient.module.css';
 import { useSentence } from "~/hooks/useSentenceAPI";
 import { SpeakButton } from "~/app/components/SpeakButton";
 import { useKeyboardShortcuts } from "~/app/components/useKeyboardShortcuts";
@@ -13,6 +14,8 @@ import { cleanString } from "../utils/NLP/cleanStrings";
 import { useSpeechSynthesis } from "react-speech-kit";
 import type { TopicOption } from "types/types";
 import { TopicsSelect } from "../components/TopicsSelect";
+
+import  BlurToggleComponent from "./BlurToggleComponent";
 
 
 export const Spelling = () => {
@@ -73,22 +76,23 @@ export const Spelling = () => {
   const handleInputSubmit = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key !== "Enter") return;
     setCheckSpelling(true);
-
+  
     const correctPhrase = cleanString(sentence?.phrase ?? "").split(" ");
     const userPhrase = cleanString(userInput).split(" ");
     const missSpelledWords = correctPhrase.filter((word, index) => word !== userPhrase[index]);
-    const isCorrect = missSpelledWords.length === 0;
-    setComparisonResult({ correct: isCorrect, missSpelledWords });
+  
+    setComparisonResult({ correct: missSpelledWords.length === 0, missSpelledWords });
     setStoreWrongSpelling(prev => [...new Set([...missSpelledWords, ...prev])]);
   };
-
+  
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center">
-      <h1 className="col-span-2 mb-6 mt-6 text-center text-6xl font-bold bg-gradient-to-r from-cyan-500 to-blue-500 drop-shadow-lg text-transparent bg-clip-text">
-        LexIA
-      </h1>
-      <ShortcutInstructions />
+    
+    <div className={styles.pageContainer}>
+    <h2 className="col-span-2 mb-6 mt-6 text-center text-6xl font-bold bg-gradient-to-r from-cyan-500 to-blue-500 drop-shadow-lg text-transparent bg-clip-text">
+        LexIA {selectedOption?.value}
+    </h2>
+    <ShortcutInstructions />
       <div className="container m-2 p-2">
         <h1>Topics Selection</h1>
         <TopicsSelect authed={true} onOptionChange={handleOptionChange} />
@@ -101,9 +105,9 @@ export const Spelling = () => {
             Generated Sentence
           </h1>
         ) : (
-          <h1 className="col-span-2 -mb-6 mt-6 text-center text-lg font-bold text-blue-700 drop-shadow-lg">
-            Start your spelling practice
-          </h1>
+          <h1 className="col-span-2 mb-6 mt-6 text-center text-lg font-bold text-white animated-glow drop-shadow-lg">
+          Start your spelling practice
+        </h1>
         )}
         {checkSpelling && (
           <SpellingComparison
@@ -111,27 +115,39 @@ export const Spelling = () => {
             missSpelledWords={comparisonResult?.missSpelledWords ?? []}
           />
         )}
-        <div className="col-span-2 w-[100%]">
-          <div className="relative w-full min-w-[200px]">
-            <textarea
-              value={userInput}
-              onChange={handleInputChange}
-              onKeyDown={handleInputSubmit}
-              className="border-blue-gray-200 text-blue-gray-700 placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 disabled:bg-blue-gray-50 peer h-full min-h-[100px] w-full resize-none rounded-[7px] border border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal outline outline-0 transition-all placeholder-shown:border focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:resize-none disabled:border-0"
-              placeholder=" "
-            ></textarea>
-            <label className="before:content[' '] after:content[' '] text-blue-gray-400 before:border-blue-gray-200 after:border-blue-gray-200 peer-placeholder-shown:text-blue-gray-500 peer-disabled:peer-placeholder-shown:text-blue-gray-500 pointer-events-none absolute -top-1.5 left-0 flex h-full w-full select-none text-[11px] font-normal leading-tight transition-all before:pointer-events-none before:mr-1 before:mt-[6.5px] before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-l before:border-t before:transition-all after:pointer-events-none after:ml-1 after:mt-[6.5px] after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-r after:border-t after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-l-2 peer-focus:before:border-t-2 peer-focus:before:border-gray-900 peer-focus:after:border-r-2 peer-focus:after:border-t-2 peer-focus:after:border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent">
-              Spelling Practice
-            </label>
-          </div>
+       <div className="col-span-2 w-[100%]">
+                <div className="relative w-full min-w-[200px]">
+                    <textarea
+                        value={userInput}
+                        onChange={handleInputChange}
+                        onKeyDown={handleInputSubmit}
+                        className="border-blue-gray-200 text-blue-gray-700 placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 disabled:bg-blue-gray-50 peer h-full min-h-[100px] w-full resize-none rounded-[7px] border-2 border-gray-900 bg-white px-3 py-2.5 font-sans text-sm font-normal outline outline-0 transition-all placeholder-shown:border focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:resize-none disabled:border-0"
+                        placeholder=" "
+                    ></textarea>
+                    <label className="before:content[' '] after:content[' '] text-blue-gray-400 before:border-blue-gray-200 after:border-blue-gray-200 peer-placeholder-shown:text-blue-gray-500 peer-disabled:peer-placeholder-shown:text-blue-gray-500 pointer-events-none absolute -top-1.5 left-0 flex h-full w-full select-none text-[11px] font-normal leading-tight transition-all before:pointer-events-none before:mr-1 before:mt-[6.5px] before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-l before:border-t before:transition-all after:pointer-events-none after:ml-1 after:mt-[6.5px] after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-r after:border-t after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-l-2 peer-focus:before:border-t-2 peer-focus:before:border-gray-900 peer-focus:after:border-r-2 peer-focus:after:border-t-2 peer-focus:after:border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent">
+                        Spelling Practice
+                    </label>
+                </div>
+            </div>
+
         </div>
-        <DifficultySelect difficulty={difficulty} onChange={setDifficulty} />
-        <SpeakButton text={sentence?.phrase} />
-        <IconButton onClick={handleButtonClick} color="gradient1">
-          Next
-          <RiArrowRightSLine className="text-white" />
-        </IconButton>
-      </div>
+        <div className="flex flex-col items-center col-span-2">
+  <DifficultySelect difficulty={difficulty} onChange={setDifficulty} className="mb-4 w-full" />
+  <br />
+
+  <div className="flex w-full space-x-4">
+    <SpeakButton text={sentence?.phrase} style={{ flex: 1 }} />
+    <IconButton onClick={handleButtonClick} color="gradient1" style={{ flex: 1 }}>
+      Next <RiArrowRightSLine className="text-white" />
+    </IconButton>
+  </div>
+</div>
+
+         {/* misspelledWords:{misspelledWords.join(' ')} */}
+         <BlurToggleComponent words={comparisonResult?.missSpelledWords?.filter(Boolean) ?? []} />
+
+      
+  
     </div>
   );
 };

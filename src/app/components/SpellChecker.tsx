@@ -53,9 +53,9 @@ const SpellChecker = ({
                     Spelling Results
                 </h1>
             ) : (
-                <h1 className="col-span-2 -mb-6 mt-6 text-center text-lg font-bold text-white drop-shadow-lg">
-                    Start your spelling practice
-                </h1>
+                <h1 className="col-span-2 mb-6 mt-6 text-center text-lg font-bold text-white animated-glow drop-shadow-lg">
+          Start your spelling practice
+        </h1>
             )}
             {
                 isSpellChecking &&
