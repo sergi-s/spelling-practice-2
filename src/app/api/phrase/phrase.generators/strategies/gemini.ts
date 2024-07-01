@@ -1,5 +1,5 @@
 import type { SentenceGenerationStrategy, SentenceContentBased } from "../interfaces";
-import { GoogleGenerativeAI, type Content } from "@google/generative-ai";
+import { GoogleGenerativeAI, GoogleGenerativeAIError, type Content } from "@google/generative-ai";
 import { generateRandomLong } from "~/app/utils/random/randomLong";
 import { env } from "~/env";
 
@@ -43,7 +43,7 @@ export class GeminiChatSentenceStrategy implements SentenceGenerationStrategy {
                 },
             });
 
-            const prompt = `use ${generateRandomLong()} as a seed \n${contentMessages.map(({ content }) => content).join(", ")}`;
+            const prompt = `use ${generateRandomLong()} as a seed ${contentMessages.map(({ content }) => content).join(", ")}`;
 
             localHistory.push({
                 role: "user",
@@ -69,6 +69,11 @@ export class GeminiChatSentenceStrategy implements SentenceGenerationStrategy {
             return generatedResponse.match(/"([^"]+)"/)?.[1];
 
         } catch (error) {
+            console.log("error instanceof GoogleGenerativeAIError", error instanceof GoogleGenerativeAIError)
+            if (typeof error === "string" && error.includes("SAFETY")) {
+                localHistory.shift()
+                return await this.generateSentence(contentMessages)
+            }
             console.error('Error:');
             console.dir({ error }, { depth: null })
         }

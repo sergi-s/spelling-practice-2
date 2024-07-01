@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { existsSync, readFileSync, writeFileSync } = require("fs");
+const { writeFileSync } = require("fs");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { WordTokenizer } = require("natural");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -75,7 +75,6 @@ function getInvertedFrequencyScores(frequencyDocument) {
   }
   return invertedFrequencyScores;
 }
-
 
 module.exports = {
   createFrequencyDocument,

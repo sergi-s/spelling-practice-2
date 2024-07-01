@@ -1,31 +1,37 @@
 import { calculateSentenceDifficulty } from "~/app/utils/NLP/calculateDifficulty";
 import { getRandomElement } from "~/app/utils/random/chooseRandomElement";
-import type { Notify, SentenceContentBased, SentenceGenerationStrategy } from "./interfaces";
+import type { GeneratedPhrase, Notify, SentenceContentBased, SentenceGenerationStrategy } from "./interfaces";
 import topicRepo from "../../topics/repositories/topicRepository";
 import { SentenceStrategy, TopicSentenceStrategy } from "./strategies";
-
+import { extractAndConvertNumbers } from "~/app/utils/NLP/number-to-word";
+import { tokenize } from "~/app/utils/NLP/tokenizer";
+import { saveGeneratedPhrase } from "../services/phrase.service";
 
 
 // TODO: new difficulty implementation
 // TODO: 1- generate a phrase (later will try to make the difficulty as input work)
-// TODO: 2- get the number of syllabus for each word, and based on the maximum set the difficulty level
-// TODO: 3- update the schema so for each word there is a number of appearances, and the number of incorrect spelling, and based on the maximum set the difficulty level
 
-
-export async function generateSentence(strategy: new () => SentenceGenerationStrategy, contentBased: SentenceContentBased[]): Promise<string | undefined> {
+export async function generateSentence(strategy: new () => SentenceGenerationStrategy, contentBased: SentenceContentBased[]): Promise<GeneratedPhrase | undefined> {
     try {
 
         // Instantiate the selected strategy
         const sentenceGenerationStrategy = new strategy();
 
         // Generate the sentence using the selected strategy
-        const generatedSentence = await sentenceGenerationStrategy.generateSentence(contentBased);
+        let generatedSentence = await sentenceGenerationStrategy.generateSentence(contentBased);
 
         if (!generatedSentence) {
             // return generateSentence(strategy, contentBased)
+            throw new Error("could not generate a word")
         }
 
-        return generatedSentence;
+        // clean up the sentence
+        // if string has numbers
+        generatedSentence = extractAndConvertNumbers(generatedSentence)
+        const tokenizedSentence = tokenize(generatedSentence)
+
+
+        return { generatedSentence, tokenizedSentence };
     } catch (error) {
         console.error('Error generating sentence:', error);
         throw error;
@@ -33,30 +39,34 @@ export async function generateSentence(strategy: new () => SentenceGenerationStr
 }
 
 
+// ?This is used by the SSE only, so technically this should be moved 
 export const generateAndSaveSentence = async (n = 1, notify: Notify) => {
     const topics = await topicRepo.getAllTopics()
     for (let i = 0; i < n; i++) {
 
         const topic = getRandomElement(topics)
-        const contentBased: SentenceContentBased[] = [
-            new TopicSentenceStrategy(topic)
-        ];
-
+        const contentBased: SentenceContentBased[] = [new TopicSentenceStrategy(topic)];
 
         const phrase = await generateSentence(SentenceStrategy, contentBased);
 
-        if (!phrase) return notify.log("No sentence generated")
-        const { difficultyScore, frequencyScore, lengthScore, syllable } = await calculateSentenceDifficulty(phrase)
-        notify.log(`Sentence ${i + 1}, calculated=> difficultyScore:${(difficultyScore).toFixed(2)}
-        syllable:${(syllable).toFixed(2)}
-        frequencyScore:${(frequencyScore).toFixed(2)}
-        lengthScores:${(lengthScore).toFixed(2)}
-        , topic:${topic}`);
+        if (!phrase) { notify.log(`Sentence ${i + 1}, FAILED TO GENERATE`); notify.error(`Sentence ${i + 1}, FAILED TO GENERATE`); return }
 
-        // const savedPhrase = await saveGeneratedPhrase(difficulty, language, phrase, topic);
-        // if (!savedPhrase) return notify.log("The sentence was not saved")
+        const { generatedSentence, tokenizedSentence } = phrase
+
+        if (!phrase) return notify.log("No sentence generated")
+        const { score, lengthScore, syllableScore } = await calculateSentenceDifficulty(generatedSentence)
+
+        notify.log(`Sentence ${i + 1}, 
+        \n\difficultyScore:${(score).toFixed(2)}
+        \n\tsyllable:${(syllableScore).toFixed(2)}
+        \n\tlengthScores:${(lengthScore).toFixed(2)}, 
+        \n\ttopic:${topic}, 
+        \n\ttokenizedSentence:${tokenizedSentence.join("_")}`);
+
+        const savedPhrase = await saveGeneratedPhrase(phrase, topic);
+        if (!savedPhrase) return notify.log("The sentence was not saved")
         // notify.log(`Sentence ${i + 1}, topic:${topic}: ${savedPhrase.phrase}`);
-        notify.log(`\t=>${phrase}`);
+        notify.log(`\t=>${generatedSentence}`);
     }
     notify.complete("done all processes");
 }

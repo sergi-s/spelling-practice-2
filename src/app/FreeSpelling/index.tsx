@@ -31,11 +31,11 @@ const SpellingFreePage = () => {
             </h2>
             <ShortcutInstructions />
 
-            <TopicsSelect authed={false} onOptionChange={setSelectedOption} />
+            <TopicsSelect onOptionChange={setSelectedOption} />
 
             <div className="grid max-w-lg grid-cols-1 gap-4 sm:grid-cols-1 md:gap-8">
 
-                <SpellChecker correctSentence={currentSentence?.phrase ?? "wait 1 sec"}
+                <SpellChecker correctSentence={currentSentence!}
                     onWrongWordsChange={handleWrongWordsChange}
                     setUserInput={setUserInput}
                     userInput={userInput}

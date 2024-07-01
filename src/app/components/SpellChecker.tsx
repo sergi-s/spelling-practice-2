@@ -1,29 +1,36 @@
-import React, { useState } from 'react';
+import { type Phrase } from '@prisma/client';
+import { useSession } from 'next-auth/react';
+import React from 'react';
 
 const SpellChecker = ({
-    correctSentence, onWrongWordsChange, userInput, setUserInput, isSpellChecking, setIsSpellChecking
+    correctSentence, onWrongWordsChange, userInput, setUserInput, isSpellChecking, setIsSpellChecking, submitUserPerformance
 }:
-{
-    correctSentence: string, onWrongWordsChange: (value: string[]) => void, userInput: string, setUserInput: (input: string) => void, isSpellChecking: boolean, setIsSpellChecking: (flag: boolean) => void
-}) => {
+    {
+        correctSentence: Phrase, onWrongWordsChange: (value: string[]) => void, userInput: string,
+        setUserInput: (input: string) => void, isSpellChecking: boolean, setIsSpellChecking: (flag: boolean) => void,
+        submitUserPerformance?: (userInput: string, sentence: Phrase) => Promise<void>
+    }) => {
+
+
+    const { status } = useSession()
 
     const compareSentences = () => {
-        const correctWords = correctSentence.split(/[ ,.'’]+/);
+        const correctWords = correctSentence?.phrase.split(/[ ,.'’]+/) || [];
         const userWords = userInput.split(/[ ,.'’]+/);
         const maxLength = Math.max(correctWords.length, userWords.length);
 
         const result = [];
         for (let i = 0; i < maxLength; i++) {
-            const correctWord = correctWords[i] ? correctWords[i].toLowerCase() : '';
-            const userWord = userWords[i] ? userWords[i].toLowerCase() : '';
+            const correctWord = correctWords[i] ? correctWords[i]!.toLowerCase() : '';
+            const userWord = userWords[i] ? userWords[i]!.toLowerCase() : '';
 
             if (correctWord === userWord) {
                 result.push(<span key={i}>{correctWord}{' '}</span>);
             } else {
                 result.push(
                     <span key={i}>
-                        <span style={{ color: 'green' }}>{userWord}</span>
-                        <span style={{ color: 'red' }}><s>{correctWord}</s></span>{' '}
+                        <span style={{ color: 'red' }}><s>{userWord}</s></span>
+                        <span style={{ color: 'green' }}>{correctWord}</span>{' '}
                     </span>
                 );
             }
@@ -35,10 +42,14 @@ const SpellChecker = ({
     const handleKeyPress = (e: { key: string; }) => {
         if (e.key === 'Enter') {
             setIsSpellChecking(true);
-            const correctWords = correctSentence.split(/[ ,.'’]+/);
+            const correctWords = correctSentence.phrase.split(/[ ,.'’]+/);
             const userWords = userInput.split(/[ ,.'’]+/);
             const wrongWords = correctWords.filter((word, index) => word.toLowerCase() !== userWords[index]?.toLowerCase());
             onWrongWordsChange(wrongWords);
+            if (status === "authenticated" && submitUserPerformance && !isSpellChecking) {
+                // track user performance
+                void submitUserPerformance(userInput, correctSentence)
+            }
         }
     };
 
@@ -54,8 +65,8 @@ const SpellChecker = ({
                 </h1>
             ) : (
                 <h1 className="col-span-2 mb-6 mt-6 text-center text-lg font-bold text-white animated-glow drop-shadow-lg">
-          Start your spelling practice
-        </h1>
+                    Start your spelling practice
+                </h1>
             )}
             {
                 isSpellChecking &&

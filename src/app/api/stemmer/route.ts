@@ -1,7 +1,7 @@
 "use server"
 import { type NextRequest, NextResponse } from 'next/server';
 import { schema } from './validation';
-import { extractEnglishWords, stem } from './service';
+import { stem } from './service';
 
 //? NOTE: This is a playground file to test stemmers and word lookups
 
@@ -26,11 +26,8 @@ export const POST = async (req: NextRequest) => {
         // what comes next should be language specific (because french has accents and what not)
 
 
-        phrase = phrase.replace(/[^a-z A-Z]/g, '').toLowerCase();
-
-
         // console.log({ extractEnglishWords: extractEnglishWords(phrase) })
-        const englishWords = extractEnglishWords(phrase);
+        const englishWords = tokenize(phrase);
         return NextResponse.json({
             englishWords,
             stem: await stem(phrase, "en")
@@ -47,6 +44,7 @@ export const POST = async (req: NextRequest) => {
 
 import { calculateSentenceDifficulty } from '../../utils/NLP/calculateDifficulty';
 import phraseRepo from '../phrase/repositories/phraseRepository';
+import { tokenize } from '~/app/utils/NLP/tokenizer';
 
 
 // ====================================================
@@ -74,7 +72,7 @@ export const GET = async () => {
     for (const sentence of sentences) {
         const sentenceStr = sentence.phrase.replace(/[^a-zA-Z\s]/g, '').toLowerCase();
         const difficultyScore = await calculateSentenceDifficulty(sentenceStr);
-        r[sentenceStr] = difficultyScore.difficultyScore;
+        r[sentenceStr] = difficultyScore.score;
         console.log("=============")
     }
     return NextResponse.json(Object.fromEntries(Object.entries(r).sort((a, b) => a[1] - b[1])))

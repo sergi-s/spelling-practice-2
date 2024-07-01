@@ -14,17 +14,17 @@ export const POST = async (
 
         const { sentenceIds, difficulty, topic, misspelledWords } = response.data
 
-        const isMisspelledLogic = !!(misspelledWords && misspelledWords.length > 0 && Math.random() > 0.5);
-        console.log({ misspelledWords, isMisspelledLogic })
+        // const isMisspelledLogic = !!(misspelledWords && misspelledWords.length > 0 && Math.random() > 0.5);
+        // console.log({ misspelledWords, isMisspelledLogic })
 
-        // return NextResponse.json({
-        //     phrase: "mama 7elwa",
-        //     id: "121212112",
-        //     difficulty: 1
-        // })
+        // // return NextResponse.json({
+        // //     phrase: "mama 7elwa",
+        // //     id: "121212112",
+        // //     difficulty: 1
+        // // })
 
-        if (isMisspelledLogic) return NextResponse.json(await trainOnMisspelledWords(misspelledWords));
-        return NextResponse.json(await getRandomPhrasesNotInList(sentenceIds, difficulty, topic))
+        // if (isMisspelledLogic) return NextResponse.json(await trainOnMisspelledWords(misspelledWords));
+        // return NextResponse.json(await getRandomPhrasesNotInList(sentenceIds, difficulty, topic))
 
     } catch (error) {
         console.error('Error fetching user:', error);
