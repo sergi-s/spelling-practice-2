@@ -8,7 +8,6 @@ import SentenceComponent from "../components/Sentence";
 import SpellChecker from "../components/SpellChecker";
 import { BlurToggleComponent } from "../components/BlurToggleComponent";
 import useAuthedSentenceManagement from "~/hooks/useAuthedSentenceManagement";
-import { saveSentenceByMe } from "../api/phrase/phrase.generators/route";
 
 
 const AuthedSpelling = () => {
@@ -54,13 +53,13 @@ const AuthedSpelling = () => {
                 <BlurToggleComponent words={misspelledWords.filter(Boolean)} />
 
             </div>
-            <button onClick={() => {
+            {/* <button onClick={() => {
                 const str = "Rust's type system helps prevent errors."
                 const res = saveSentenceByMe(str)
                 alert(JSON.stringify(res))
             }}>
                 Click ME
-            </button>
+            </button> */}
 
         </div>
     );

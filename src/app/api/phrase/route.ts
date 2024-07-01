@@ -1,6 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { schema } from './phrase.validation';
-import { getRandomPhrasesNotInList, trainOnMisspelledWords } from './services/phrase.service';
 
 
 export const POST = async (

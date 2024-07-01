@@ -4,7 +4,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "prebuild": "node src/scripts/FrequencyDocumentGen.cjs",
     "build": "next build",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
