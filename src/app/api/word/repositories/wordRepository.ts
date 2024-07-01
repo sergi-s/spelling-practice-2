@@ -12,6 +12,7 @@ const repository = {
     save: async ({ stemmedWord, word }: { stemmedWord: string, word: string }) => {
         const savedWord = await prisma.word.create({
             data: {
+                performance: { correctEncounters: 0, encounters: 0 },
                 word, stemmedWord: {
                     connectOrCreate: {
                         where: { stem: stemmedWord },
@@ -32,6 +33,41 @@ const repository = {
             }
         });
         return updatedWord;
+    },
+    createOrGet: async (word: string, stemmedWord: string) => {
+        return await prisma.word.upsert({
+            create: {
+                performance: { correctEncounters: 0, encounters: 0 },
+                word, stemmedWord: {
+                    connectOrCreate: {
+                        where: { stem: stemmedWord }, create: { stem: stemmedWord }
+                    }
+                }
+            }, update: {}, where: { word }
+        })
+    },
+
+    getByPhraseId: async (id: string) => {
+        return await prisma.phrase.findFirst({ where: { id }, include: { words: true } })
+            .then((sentence) => { return sentence?.words.map((word) => word) }) ?? []
+    },
+    updateWordsPerformance: async (savedWords: { id: string, word: string }[], existingUserWordIds: string[], userWords: string[]) => {
+        const bulkOperationsWords = savedWords
+            .filter(({ id }) => !existingUserWordIds.includes(id))
+            .map(({ word }, index) => {
+                const isCorrect = userWords[index] === word;
+
+                return {
+                    q: { word },
+                    u: { $inc: { "performance.encounters": 1, ...(isCorrect && { "performance.correctEncounters": 1 }) } },
+                };
+            });
+
+        (bulkOperationsWords.length <= 0) ? [] : await prisma.$runCommandRaw({
+            update: "Word",
+            updates: bulkOperationsWords,
+        });
+
     }
 }
 

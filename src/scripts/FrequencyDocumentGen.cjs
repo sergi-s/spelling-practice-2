@@ -5,6 +5,8 @@ const {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
 } = require("../app/utils/NLP/createFrequencyDocument.cjs");
 
-void tokenizeCorpus().then((d) => {
-  return createFrequencyDocument(d);
-});
+// !Stop using the Frequency as a difficulty metric for now
+// void tokenizeCorpus().then((d) => {
+//   if (!d) return;
+//   return createFrequencyDocument(d);
+// });

@@ -45,10 +45,9 @@ declare module 'next-auth/jwt' {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, token }) => {
-      if (token) {
-        session.user.id = token.id;
-        session.user.role = token.role;
+    session: ({ session, user }) => {
+      if (user) {
+        session.user = user;
       }
       return session;
     },
@@ -66,11 +65,7 @@ export const authOptions: NextAuthOptions = {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
       async profile(profile: GoogleProfile) {
-        console.log({ profile })
-        let userRole = "Google user";
-        if (profile?.email === "sergisamirboules@gmail.com") {
-          userRole = "admin";
-        }
+        const userRole = "Google user";
         return {
           id: profile.sub,
           name: profile.name,

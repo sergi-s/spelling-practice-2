@@ -2,9 +2,11 @@ import React from 'react';
 import CreatableSelect from 'react-select/creatable';
 import { type TopicOption } from 'types/types';
 import useTopicsSelect from '../../hooks/useTopicsSelect';
+import { useSession } from 'next-auth/react';
 
-export const TopicsSelect = ({ authed, onOptionChange }: { authed: boolean, onOptionChange: (selectedValue: TopicOption) => void; }) => {
+export const TopicsSelect = ({ onOptionChange }: { onOptionChange: (selectedValue: TopicOption) => void; }) => {
 
+    const { status } = useSession()
     const {
         options,
         error,
@@ -22,19 +24,13 @@ export const TopicsSelect = ({ authed, onOptionChange }: { authed: boolean, onOp
     };
 
     const handleSelectCreate = (inputValue: string) => {
-        if (!authed) alert("You are adding a new Topic, Login to add more")
+        if (status != "authenticated") alert("You are adding a new Topic, Login to add more")
         onOptionChange({ value: inputValue, label: inputValue });
     };
 
     const customStyles = {
-        menu: (provided) => ({
-            ...provided,
-            zIndex: 9999 // High z-index to ensure overlay - Ensures most other actions cannot be performed while trying to use topic feature
-        }),
-        menuList: (provided) => ({
-            ...provided,
-            maxHeight: '400px' // Increase the height of the dropdown list
-        })
+        menu: (provided: unknown[]) => ({ ...provided, zIndex: 9999 }),
+        menuList: (provided: unknown[]) => ({ ...provided, maxHeight: '400px' })
     };
 
     if (isLoading) {
@@ -48,12 +44,14 @@ export const TopicsSelect = ({ authed, onOptionChange }: { authed: boolean, onOp
     return (
         <div className="container m-2 p-1">
             <CreatableSelect
-                options={options}
+                options={options!}
                 value={selectedOption}
                 onChange={handleSelectChange}
                 onCreateOption={handleSelectCreate}
                 placeholder="Search and select or create a topic..."
-                styles={customStyles} // Apply custom styles here
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                //@ts-ignore
+                styles={customStyles}
             />
             {selectedOption && <div>You selected: {selectedOption.label}</div>}
         </div>

@@ -32,6 +32,7 @@ function isEnglishWord(word) {
 }
 
 // Function to parse the Brown Corpus files and return the extracted data
+
 async function tokenizeCorpus() {
   /**
    * @type {string[]}
@@ -39,6 +40,9 @@ async function tokenizeCorpus() {
   const result = [];
 
   try {
+    // Check if the corpus directory exists
+    await fs.promises.access(corpusDirectory);
+
     // Read the list of files in the corpus directory
     const files = await fs.promises.readdir(corpusDirectory);
 
@@ -70,8 +74,14 @@ async function tokenizeCorpus() {
 
     return result;
   } catch (error) {
-    console.error("Error tokenizing corpus:", error);
-    throw error;
+    if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
+      console.log("Corpus directory does not exist.");
+      return null;
+    } else {
+      console.error("Error tokenizing corpus:", error);
+      throw error;
+    }
   }
 }
+
 module.exports = { tokenizeCorpus };

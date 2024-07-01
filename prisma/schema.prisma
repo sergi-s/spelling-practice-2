@@ -35,15 +35,16 @@ model Account {
 }
 
 model User {
-    id            String     @id @default(auto()) @map("_id") @db.ObjectId
-    name          String?
-    role          String?
-    email         String?    @unique
-    emailVerified DateTime?
-    image         String?
-    sessions      Session[]
-    userWords     UserWord[]
-    Account       Account?
+    id                   String                 @id @default(auto()) @map("_id") @db.ObjectId
+    name                 String?
+    role                 String?
+    email                String?                @unique
+    emailVerified        DateTime?
+    image                String?
+    sessions             Session[]
+    userWords            UserAttemptingWord[]
+    Account              Account?
+    userAttemptingPhrase UserAttemptingPhrase[]
 }
 
 model VerificationToken {
@@ -62,38 +63,56 @@ model StemmedWord {
 }
 
 model Word {
-    id            String       @id @default(auto()) @map("_id") @db.ObjectId
-    word          String       @unique
-    stemmedWordId String?      @db.ObjectId
-    stemmedWord   StemmedWord? @relation(fields: [stemmedWordId], references: [id])
-    createdAt     DateTime     @default(now())
-    updatedAt     DateTime     @updatedAt
-    phraseIDs     String[]     @db.ObjectId
-    categories    Phrase[]     @relation(fields: [phraseIDs], references: [id])
-    userWords     UserWord[]
+    id            String               @id @default(auto()) @map("_id") @db.ObjectId
+    word          String               @unique
+    stemmedWordId String?              @db.ObjectId
+    stemmedWord   StemmedWord?         @relation(fields: [stemmedWordId], references: [id])
+    createdAt     DateTime             @default(now())
+    updatedAt     DateTime             @updatedAt
+    phraseIDs     String[]             @db.ObjectId
+    categories    Phrase[]             @relation(fields: [phraseIDs], references: [id])
+    userWords     UserAttemptingWord[]
+    performance   PerformanceMetrics?
 }
 
 model Phrase {
-    id         String   @id @default(auto()) @map("_id") @db.ObjectId
-    phrase     String
-    createdAt  DateTime @default(now())
-    updatedAt  DateTime @updatedAt
-    wordIDs    String[] @db.ObjectId
-    difficulty Int?
-    words      Word[]   @relation(fields: [wordIDs], references: [id])
-
-    topicId String? @db.ObjectId
-    topic   Topic?  @relation(fields: [topicId], references: [id])
+    id                   String                 @id @default(auto()) @map("_id") @db.ObjectId
+    phrase               String
+    createdAt            DateTime               @default(now())
+    updatedAt            DateTime               @updatedAt
+    wordIDs              String[]               @db.ObjectId
+    words                Word[]                 @relation(fields: [wordIDs], references: [id])
+    difficulty           Difficulty
+    topicId              String?                @db.ObjectId
+    topic                Topic?                 @relation(fields: [topicId], references: [id])
+    userAttemptingPhrase UserAttemptingPhrase[]
 }
 
-model UserWord {
-    id                String @id @default(auto()) @map("_id") @db.ObjectId
-    wordId            String @db.ObjectId
-    word              Word   @relation(fields: [wordId], references: [id])
-    userId            String @db.ObjectId
-    user              User   @relation(fields: [userId], references: [id])
-    encounters        Int    @default(0)
-    correctEncounters Int    @default(0)
+type Difficulty {
+    score          Float
+    frequencyScore Float
+    lengthScore    Float
+    syllableScore  Float
+}
+
+model UserAttemptingWord {
+    id          String             @id @default(auto()) @map("_id") @db.ObjectId
+    wordId      String             @db.ObjectId
+    word        Word               @relation(fields: [wordId], references: [id])
+    userId      String             @db.ObjectId
+    user        User               @relation(fields: [userId], references: [id])
+    performance PerformanceMetrics
+
+    @@unique([wordId, userId])
+}
+
+model UserAttemptingPhrase {
+    id          String             @id @default(auto()) @map("_id") @db.ObjectId
+    sentenceId  String             @db.ObjectId
+    sentence    Phrase             @relation(fields: [sentenceId], references: [id])
+    userId      String             @db.ObjectId
+    user        User               @relation(fields: [userId], references: [id])
+    performance PerformanceMetrics
 }
 
 model Topic {
@@ -103,4 +122,9 @@ model Topic {
     updatedAt DateTime @updatedAt
 
     phrases Phrase[]
+}
+
+type PerformanceMetrics {
+    encounters        Int @default(0)
+    correctEncounters Int @default(0)
 }

@@ -18,13 +18,10 @@ const SentenceComponent = ({ currentSentence, handleNext, currentSentenceRef }: 
     if (!currentSentence) return <h1>No sentence sorry</h1>
     return (
         <>
-            {/* <p>{currentSentence.phrase}</p> */}
             <div className="grid max-w-lg grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-  <IconButton color='gradient1' onClick={read}>Read</IconButton>
-  <IconButton onClick={next} color='gradient2'>Next <RiArrowRightSLine className="text-white" /></IconButton>
-</div>
-
-
+                <IconButton color='gradient1' onClick={read}>Read</IconButton>
+                <IconButton onClick={next} color='gradient2'>Next <RiArrowRightSLine className="text-white" /></IconButton>
+            </div>
         </>
     );
 };

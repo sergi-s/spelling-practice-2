@@ -1,4 +1,5 @@
 import { prisma } from "../../globalVariables";
+import { type Difficulty } from "../phrase.generators/interfaces";
 
 const phraseRepo = {
     getPhraseByWordIdAndNotInSentencesIds: async (wordId: string, sentenceIds: string[]) => {
@@ -31,7 +32,7 @@ const phraseRepo = {
         return await prisma.phrase.findFirst({ where: { phrase } });
     },
 
-    createPhrase: async (phrase: string, difficulty: number, wordIDs: string[], isTopic?: { id: string }) => {
+    createPhrase: async (phrase: string, difficulty: Difficulty, wordIDs: string[], isTopic?: { id: string }) => {
         const sentenceP = await prisma.phrase.create({
             data: {
                 phrase,

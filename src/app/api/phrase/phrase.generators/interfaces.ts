@@ -14,3 +14,11 @@ export interface SentenceGenerationStrategy {
     generateSentence(messages: SentenceContentBased[]): Promise<string | undefined>;
 }
 
+export interface GeneratedPhrase { generatedSentence: string, tokenizedSentence: string[] }
+
+export type Difficulty = {
+    score: number;
+    frequencyScore: number;
+    lengthScore: number;
+    syllableScore: number;
+}

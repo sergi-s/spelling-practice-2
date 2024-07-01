@@ -1,7 +1,25 @@
+"use server"
 import { NextResponse } from "next/server";
 import { generateAndSaveSentence } from ".";
 import { Logger } from "~/app/utils/logger";
 import { ConsoleOutput, StreamOutput } from "~/app/utils/outputs";
+import { tokenize } from "~/app/utils/NLP/tokenizer";
+import { saveGeneratedPhrase } from "../services/phrase.service";
+import { calculateSentenceDifficulty } from "~/app/utils/NLP/calculateDifficulty";
+
+export const saveSentenceByMe = async (sentence: string) => {
+    //! this is a endpoint to test manually 
+    const phrase = { generatedSentence: sentence, tokenizedSentence: tokenize(sentence) }
+
+    const { generatedSentence, tokenizedSentence } = phrase
+
+    if (!phrase) return "No sentence generated"
+    const { score, lengthScore, syllableScore } = await calculateSentenceDifficulty(generatedSentence)
+    console.log({ score, lengthScore, syllableScore })
+
+    const savedPhrase = await saveGeneratedPhrase(phrase);
+    if (!savedPhrase) return "The sentence was not saved"
+}
 
 const generateNSentences = async (): Promise<Response | void> => {
     const useConsole = false
