@@ -7,7 +7,6 @@ export async function getFreePhrases({ skip = 0, take = 10, topic, difficulty }:
   try {
     const whereClause: Prisma.PhraseWhereInput = {
       phrase: topic !== null && topic !== undefined ? { contains: topic } : undefined,
-      difficulty: difficulty ?? undefined,
     };
 
     const phrases = await prisma.phrase.findMany({
