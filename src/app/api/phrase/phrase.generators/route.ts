@@ -7,7 +7,7 @@ import { tokenize } from "~/app/utils/NLP/tokenizer";
 import { saveGeneratedPhrase } from "../services/phrase.service";
 import { calculateSentenceDifficulty } from "~/app/utils/NLP/calculateDifficulty";
 
-export const saveSentenceByMe = async (sentence: string) => {
+/*export*/ const saveSentenceByMe = async (sentence: string) => {
     //! this is a endpoint to test manually 
     const phrase = { generatedSentence: sentence, tokenizedSentence: tokenize(sentence) }
 
