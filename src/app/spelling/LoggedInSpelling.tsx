@@ -54,7 +54,7 @@ const AuthedSpelling = () => {
 
             </div>
             {/* <button onClick={() => {
-                const str = "Rust's type system helps prevent errors."
+                const str = "I can not stop the milk production."
                 const res = saveSentenceByMe(str)
                 alert(JSON.stringify(res))
             }}>

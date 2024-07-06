@@ -15,6 +15,15 @@ const topicRepo = {
     },
     createManyTopics: async (topics: { topic: string; }[]) => {
         return await prisma.topic.createMany({ data: topics })
+    },
+    getOrCreate: async (topic: string) => {
+        return prisma.topic.upsert({ where: { topic }, create: { topic }, update: {} })
+    },
+    getRandomTopic: async () => {
+        // TODO: make this generic
+        const totalCount = await prisma.topic.count();
+        const randomTopic = await prisma.topic.findFirstOrThrow({ skip: Math.floor(Math.random() * totalCount) });
+        return randomTopic;
     }
 }
 

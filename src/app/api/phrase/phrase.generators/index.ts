@@ -2,10 +2,11 @@ import { calculateSentenceDifficulty } from "~/app/utils/NLP/calculateDifficulty
 import { getRandomElement } from "~/app/utils/random/chooseRandomElement";
 import type { GeneratedPhrase, Notify, SentenceContentBased, SentenceGenerationStrategy } from "./interfaces";
 import topicRepo from "../../topics/repositories/topicRepository";
-import { SentenceStrategy, TopicSentenceStrategy } from "./strategies";
+import { SentenceStrategy, TopicSentenceStrategy, WordSentenceStrategy } from "./strategies";
 import { extractAndConvertNumbers } from "~/app/utils/NLP/number-to-word";
 import { tokenize } from "~/app/utils/NLP/tokenizer";
 import { saveGeneratedPhrase } from "../services/phrase.service";
+import { Topic } from "@prisma/client";
 
 
 // TODO: new difficulty implementation
@@ -38,9 +39,27 @@ export async function generateSentence(strategy: new () => SentenceGenerationStr
     }
 }
 
+export const generateAndSaveSentence = async ({ word, topicName }: { word?: string, topicName?: string }) => {
+
+    let topic: Topic | null = null;
+    if (topicName) topic = await topicRepo.getOrCreate(topicName)
+    const contentBased: SentenceContentBased[] = [];
+    if (topic) contentBased.push(new TopicSentenceStrategy(topic.topic))
+    if (word) contentBased.push(new WordSentenceStrategy(word))
+
+    const phrase = await generateSentence(SentenceStrategy, contentBased);
+
+    if (!phrase) {
+        throw new Error("I was not able to generate a sentence")
+    }
+
+    const savedPhrase = await saveGeneratedPhrase(phrase, topic?.topic);
+    if (!savedPhrase) throw new Error("The sentence was not saved")
+    return savedPhrase
+}
 
 // ?This is used by the SSE only, so technically this should be moved 
-export const generateAndSaveSentence = async (n = 1, notify: Notify) => {
+export const generateAndSaveSentenceSSE = async (n = 1, notify: Notify) => {
     const topics = await topicRepo.getAllTopics()
     for (let i = 0; i < n; i++) {
 
