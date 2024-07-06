@@ -1,3 +1,4 @@
+import { type UserAttemptingWord } from "@prisma/client";
 import { prisma } from "../globalVariables"
 
 
@@ -22,7 +23,7 @@ export const userWordAttemptRepo = {
 
             return {
                 q: { wordId: id, userId },
-                u: { $inc: { "performance.encounters": 1, ...(isCorrect && { "performance.correctEncounters": 1 }) } },
+                u: { $inc: { "performance.encounters": 1, "performance.correctEncounters": isCorrect ? 1 : 0 } },
                 upsert: true
             };
         });
@@ -34,4 +35,16 @@ export const userWordAttemptRepo = {
         })
 
     },
+
+    getAttemptsBasedOnAverage: async (userId: string, average: number) => {
+        const r = await prisma.userAttemptingWord.findRaw({
+            filter: {
+                userId: { $eq: userId },
+                "performance.correctEncounters": { $exists: true },
+                "performance.encounters": { $gt: 0 },
+                $expr: { $lt: [{ $divide: ["$performance.correctEncounters", "$performance.encounters"] }, average] }
+            },
+        })
+        return r as unknown as UserAttemptingWord[]
+    }
 }

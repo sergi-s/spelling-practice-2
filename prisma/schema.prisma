@@ -113,6 +113,8 @@ model UserAttemptingPhrase {
     userId      String             @db.ObjectId
     user        User               @relation(fields: [userId], references: [id])
     performance PerformanceMetrics
+
+    @@unique([userId, sentenceId])
 }
 
 model Topic {

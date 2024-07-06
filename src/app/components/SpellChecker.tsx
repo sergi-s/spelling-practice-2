@@ -15,21 +15,21 @@ const SpellChecker = ({
     const { status } = useSession()
 
     const compareSentences = () => {
-        const correctWords = correctSentence?.phrase.split(/[ ,.'’]+/) || [];
-        const userWords = userInput.split(/[ ,.'’]+/);
+        const correctWords = correctSentence?.phrase.toLowerCase().split(/[ ,.'’]+/) || [];
+        const userWords = userInput.toLowerCase().split(/[ ,.'’]+/);
         const maxLength = Math.max(correctWords.length, userWords.length);
 
         const result = [];
         for (let i = 0; i < maxLength; i++) {
-            const correctWord = correctWords[i] ? correctWords[i]!.toLowerCase() : '';
-            const userWord = userWords[i] ? userWords[i]!.toLowerCase() : '';
+            const correctWord = correctWords[i] ? correctWords[i]! : '';
+            const userWord = userWords[i] ? userWords[i]! : '';
 
             if (correctWord === userWord) {
                 result.push(<span key={i}>{correctWord}{' '}</span>);
             } else {
                 result.push(
                     <span key={i}>
-                        <span style={{ color: 'red' }}><s>{userWord}</s></span>
+                        <span style={{ color: 'red' }}><s>{userWord}</s></span>{' '}
                         <span style={{ color: 'green' }}>{correctWord}</span>{' '}
                     </span>
                 );
