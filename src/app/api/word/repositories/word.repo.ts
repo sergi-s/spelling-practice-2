@@ -1,7 +1,7 @@
 import { prisma } from "../../globalVariables";
 
 
-const repository = {
+export const wordRepo = {
     getWordsByIds: async (wordsIds: string[]) => {
         return await prisma.word.findMany({ where: { id: { in: wordsIds } } });
     },
@@ -73,5 +73,3 @@ const repository = {
 
     }
 }
-
-export default repository
