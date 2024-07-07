@@ -1,3 +1,4 @@
+import { Phrase } from "@prisma/client";
 import { prisma } from "../../globalVariables";
 import { type Difficulty } from "../phrase.generators/interfaces";
 
@@ -51,6 +52,22 @@ const phraseRepo = {
         const include = { userAttemptingPhrase: { select: { performance: { select: { encounters: true } } } } }
         return await prisma.phrase.findMany({ include, where: { wordIDs: { hasSome: wordIds } } })
 
+    },
+    getBasedOnElo: async (eloRating: number, limit: number) => {
+        const min = 0, max = 1000
+        const fromEloToWordDiff = (eloRating - min) / (max - min);
+        const score = {
+            $gte: fromEloToWordDiff - 0.1,
+            $lte: fromEloToWordDiff + 0.1
+        }
+        // console.log({ fromEloToWordDiff, score })
+        return await prisma.phrase.findRaw({
+            filter: {
+                "difficulty.score": score
+            },
+            options: { limit }
+
+        }) as unknown as Phrase[]
     },
 };
 

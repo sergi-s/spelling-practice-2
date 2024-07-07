@@ -1,10 +1,10 @@
 import { stem } from '../../stemmer/service';
 import topicRepo from '../../topics/repositories/topicRepository';
-import phraseRepo from '../repositories/phraseRepository';
-import wordRepo from '../../word/repositories/wordRepository'
+import phraseRepo from '../repositories/phrase.repo';
 import { type GeneratedPhrase } from '../phrase.generators/interfaces';
 import { calculateSentenceDifficulty } from '~/app/utils/NLP/calculateDifficulty';
 import { type Topic } from '@prisma/client';
+import { wordRepo } from '../../word/repositories/word.repo';
 
 export async function saveGeneratedPhrase(phrase: GeneratedPhrase, topic?: string) {
     try {
@@ -35,7 +35,7 @@ export async function saveGeneratedPhrase(phrase: GeneratedPhrase, topic?: strin
         }
 
         const sentenceP = await phraseRepo.createPhrase(phrase.generatedSentence, difficulty, wordIDs, isTopic!)
-        console.log({ saved: sentenceP })
+        // console.log({ saved: sentenceP })
         return sentenceP;
     } catch (error) {
         console.error('Error:', error);
