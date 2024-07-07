@@ -129,7 +129,7 @@ async function recommendSentences(user: User) {
   const singleSad: ReturnSentence[] = sortedSentences.map((e) => ({ ...e, recommender: "Performance" }))
 
   //? recommend based on elo
-  const eloRating: number = user.eloRating as number
+  const eloRating: number = user.eloRating //as number
   // Fetch words with difficulty scores close to user's Elo rating
   const sad: ReturnSentence[] = (await phraseRepo.getBasedOnElo(eloRating, 10)).map((e) => ({ ...e, recommender: "Elo" }))
 
@@ -178,7 +178,7 @@ async function handleSpecialCase(sortedSentences: SentenceWithAttempts[], wordId
 async function updateEloRating(user: User, sentence: Phrase, isCorrect: boolean) {
   try {
 
-    const userEloRating = user.eloRating as number
+    const userEloRating = user.eloRating //as number
     // Calculate expected score
     const expectedScore = calculateExpectedScore(userEloRating, sentence.difficulty.score);
 
