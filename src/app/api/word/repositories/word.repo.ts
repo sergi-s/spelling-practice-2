@@ -1,7 +1,10 @@
 import { prisma } from "../../globalVariables";
 
 
-const repository = {
+export const wordRepo = {
+    getWordsByIds: async (wordsIds: string[]) => {
+        return await prisma.word.findMany({ where: { id: { in: wordsIds } } });
+    },
     getWord: async (word: string) => {
         return await prisma.word.findFirst({ where: { word } });
     },
@@ -59,7 +62,7 @@ const repository = {
 
                 return {
                     q: { word },
-                    u: { $inc: { "performance.encounters": 1, ...(isCorrect && { "performance.correctEncounters": 1 }) } },
+                    u: { $inc: { "performance.encounters": 1, "performance.correctEncounters": isCorrect ? 1 : 0 } },
                 };
             });
 
@@ -70,5 +73,3 @@ const repository = {
 
     }
 }
-
-export default repository

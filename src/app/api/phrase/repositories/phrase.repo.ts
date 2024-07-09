@@ -1,3 +1,4 @@
+import { Phrase } from "@prisma/client";
 import { prisma } from "../../globalVariables";
 import { type Difficulty } from "../phrase.generators/interfaces";
 
@@ -32,13 +33,13 @@ const phraseRepo = {
         return await prisma.phrase.findFirst({ where: { phrase } });
     },
 
-    createPhrase: async (phrase: string, difficulty: Difficulty, wordIDs: string[], isTopic?: { id: string }) => {
+    createPhrase: async (phrase: string, difficulty: Difficulty, wordIDs: string[], isTopic?: { id: string, topic: string }) => {
         const sentenceP = await prisma.phrase.create({
             data: {
                 phrase,
+                words: { connect: wordIDs.map((id) => ({ id })) },
                 difficulty,
-                wordIDs,
-                ...(isTopic && { topicId: isTopic.id })
+                ...(isTopic && { topic: { connectOrCreate: { where: { id: isTopic.id }, create: isTopic } } })
             }
         });
         return sentenceP;
@@ -46,7 +47,28 @@ const phraseRepo = {
 
     getPhrasesByWord: async (wordId: string) => {
         return await prisma.phrase.findMany({ where: { wordIDs: { has: wordId } } });
-    }
+    },
+    getByWordsIds: async (wordIds: string[]) => {
+        const include = { userAttemptingPhrase: { select: { performance: { select: { encounters: true } } } } }
+        return await prisma.phrase.findMany({ include, where: { wordIDs: { hasSome: wordIds } } })
+
+    },
+    getBasedOnElo: async (eloRating: number, limit: number) => {
+        const min = 0, max = 1000
+        const fromEloToWordDiff = (eloRating - min) / (max - min);
+        const score = {
+            $gte: fromEloToWordDiff - 0.1,
+            $lte: fromEloToWordDiff + 0.1
+        }
+        // console.log({ fromEloToWordDiff, score })
+        return await prisma.phrase.findRaw({
+            filter: {
+                "difficulty.score": score
+            },
+            options: { limit }
+
+        }) as unknown as Phrase[]
+    },
 };
 
 export default phraseRepo
