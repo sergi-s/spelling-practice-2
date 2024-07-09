@@ -38,7 +38,7 @@ export class GeminiChatSentenceStrategy implements SentenceGenerationStrategy {
             const chat = model.startChat({
                 history: localHistory,
                 generationConfig: {
-                    maxOutputTokens: 100,
+                    maxOutputTokens: 1000,
                     temperature: 1,
                 },
             });

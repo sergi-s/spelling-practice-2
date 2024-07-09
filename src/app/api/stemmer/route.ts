@@ -43,7 +43,7 @@ export const POST = async (req: NextRequest) => {
 
 
 import { calculateSentenceDifficulty } from '../../utils/NLP/calculateDifficulty';
-import phraseRepo from '../phrase/repositories/phraseRepository';
+import phraseRepo from '../phrase/repositories/phrase.repo';
 import { tokenize } from '~/app/utils/NLP/tokenizer';
 
 

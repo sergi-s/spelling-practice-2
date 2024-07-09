@@ -1,13 +1,13 @@
 "use server"
 import { NextResponse } from "next/server";
-import { generateAndSaveSentence } from ".";
+import { generateAndSaveSentenceSSE } from ".";
 import { Logger } from "~/app/utils/logger";
 import { ConsoleOutput, StreamOutput } from "~/app/utils/outputs";
 import { tokenize } from "~/app/utils/NLP/tokenizer";
 import { saveGeneratedPhrase } from "../services/phrase.service";
 import { calculateSentenceDifficulty } from "~/app/utils/NLP/calculateDifficulty";
 
-/*export*/ const saveSentenceByMe = async (sentence: string) => {
+const saveSentenceByMe = async (sentence: string) => {
     //! this is a endpoint to test manually 
     const phrase = { generatedSentence: sentence, tokenizedSentence: tokenize(sentence) }
 
@@ -48,7 +48,7 @@ const generateNSentences = async (): Promise<Response | void> => {
 
     }
     // Invoke long running process
-    generateAndSaveSentence(n, {
+    generateAndSaveSentenceSSE(n, {
         log: (msg: string) => logger.log(msg),
         complete: (obj: string | undefined) => logger.complete(obj),
         error: (err: Error) => logger.error(err),

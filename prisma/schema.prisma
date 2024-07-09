@@ -41,6 +41,7 @@ model User {
     email                String?                @unique
     emailVerified        DateTime?
     image                String?
+    eloRating            Int                    @default(100)
     sessions             Session[]
     userWords            UserAttemptingWord[]
     Account              Account?
@@ -113,6 +114,8 @@ model UserAttemptingPhrase {
     userId      String             @db.ObjectId
     user        User               @relation(fields: [userId], references: [id])
     performance PerformanceMetrics
+
+    @@unique([userId, sentenceId])
 }
 
 model Topic {
