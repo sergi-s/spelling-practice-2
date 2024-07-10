@@ -1,0 +1,165 @@
+
+/* Basic Nav Elements */
+.nav-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    color: #fff;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-logo {
+    flex-grow: 1;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.nav-links {
+    flex-grow: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.nav-button {
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.logged-in {
+    background-color: rgba(82, 132, 255, 0.8); /* Bluish for signin */
+}
+
+.logged-out {
+    background-color: rgba(255, 82, 82, 0.8); /* Redish for signout */
+}
+
+.nav-button:hover {
+    background-opacity: 0.8;
+}
+
+
+
+/* User Profile Icon */
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.profile-icon {
+    width: 30px; /* Adjust size as necessary */
+    height: 30px;
+    border-radius: 50%; /* Makes the image round */
+    margin-right: 10px;
+}
+
+
+/* User Profile Drop Down  */
+.input {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    background-color: #0D1117;
+    justify-content: center;
+    border-radius: 5px
+  }
+  
+  .value {
+    background-color: transparent;
+    border: none;
+    padding: 10px;
+    color: white;
+    display: flex;
+    position: relative;
+    gap: 5px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .value:not(:active):hover,
+  .value:focus {
+    background-color: #21262C;
+  }
+  
+  .value:focus,
+  .value:active {
+    background-color: #1A1F24;
+    outline: none;
+  }
+  
+  .value::before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: -10px;
+    width: 5px;
+    height: 80%;
+    background-color: #2F81F7;
+    border-radius: 5px;
+    opacity: 0;
+  }
+  
+  .value:focus::before,
+  .value:active::before {
+    opacity: 1;
+  }
+  
+  .value svg {
+    width: 15px
+  }
+  
+  .input:hover > :not(.value:hover) {
+    transition: 300ms;
+    filter: blur(1px);
+    transform: scale(0.95,0.95);
+  }
+
+  /* CSS only changes when reloading the applcation in terminal? Does not reload when change values and run hot reload */
+  .dropdown-content {
+    position: absolute;
+    top: 60px; /* Increase this value to move the dropdown further down */
+    right: 10px; /* Increase this value to move the dropdown further down */
+    background-color: #0D1117;
+    border-radius: 5px;
+    overflow: hidden;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+  }
+  
+
+.user-info:hover .dropdown-content {
+    display: flex; /* Show on hover or modify as per click */
+    flex-direction: column;
+}
+
+.value:hover, .value:focus {
+    background-color: #21262C;
+}
+
+.value {
+    padding: 10px;
+    color: white;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+}

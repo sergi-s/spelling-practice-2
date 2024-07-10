@@ -1,3 +1,5 @@
+// NOT LOGGED IN PAGE
+
 "use client"
 import React, { useState } from "react";
 import styles from '../components/backgroundGradient.module.css';
@@ -27,7 +29,7 @@ const SpellingFreePage = () => {
     return (
         <div className={styles.freePageContainer}>
             <h2 className="col-span-2 mb-6 mt-6 text-center text-6xl font-bold bg-gradient-to-r from-cyan-500 to-blue-500 drop-shadow-lg text-transparent bg-clip-text">
-                LexIA {selectedOption?.value}
+                LitIA - Not Logged in  {selectedOption?.value}
             </h2>
             <ShortcutInstructions />
 

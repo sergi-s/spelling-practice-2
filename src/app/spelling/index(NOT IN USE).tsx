@@ -5,6 +5,7 @@ import styles from '../components/backgroundGradient.module.css';
 import { useSentence } from "~/hooks/useSentenceAPI";
 import { SpeakButton } from "~/app/components/SpeakButton";
 import { useKeyboardShortcuts } from "~/app/components/useKeyboardShortcuts";
+import { getSession } from 'next-auth/react';
 
 import { DifficultySelect } from "./DifficultySelect";
 import { SpellingComparison } from "./SpellingComparison";
@@ -90,7 +91,7 @@ export const Spelling = () => {
 
     <div className={styles.pageContainer}>
       <h2 className="col-span-2 mb-6 mt-6 text-center text-6xl font-bold bg-gradient-to-r from-cyan-500 to-blue-500 drop-shadow-lg text-transparent bg-clip-text">
-        LexIA {selectedOption?.value}
+        LitIA - Logged in  {selectedOption?.value}
       </h2>
       <ShortcutInstructions />
       <div className="container m-2 p-2">

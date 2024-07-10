@@ -36,9 +36,10 @@ const AuthedSpelling = () => {
     return (
         <div className={styles.freePageContainer}>
 
-            {status == "authenticated" ? `user info:${JSON.stringify(userInfo)}` : ''}
+            {/* Below JSON User data causes whole page not be properly responsive. This is completely fine just a future note to not worry about page responsiveness while this object is active */}
+            {/* {status == "authenticated" ? `user info:${JSON.stringify(userInfo)}` : ''}  commented out for frontend work*/}
             <h2 className="col-span-2 mb-6 mt-6 text-center text-6xl font-bold bg-gradient-to-r from-cyan-500 to-blue-500 drop-shadow-lg text-transparent bg-clip-text">
-                LexIA {selectedOption?.value}
+                LitIA Logged IN {selectedOption?.value}
             </h2>
             <ShortcutInstructions />
 
