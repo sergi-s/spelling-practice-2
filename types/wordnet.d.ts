@@ -109,3 +109,11 @@ declare module 'wordnet' {
    */
   export function lookup(word: string, skipPointers?: boolean): Promise<Definition[]>;
 }
+
+
+declare module 'wordnet-db' {
+  export const libVersion: string;
+  export const version: string;
+  export const path: string;
+  export const files: string[] | undefined;
+}
