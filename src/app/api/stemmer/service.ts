@@ -7,7 +7,7 @@ import wordnetdb from 'wordnet-db';
 const stemmer = natural.PorterStemmer
 
 const initializeWordNet = async () => {
-    const wordnetPath = path.join(process.cwd(), 'node_modules', 'wordnet', 'db');
+    const wordnetPath = path.join(wordnetdb.path);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     console.log("=================================")
     console.log("Path wordNet Database, ", wordnetdb.path)
