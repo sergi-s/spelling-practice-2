@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const schema = z.object({
-    sentenceIds: z.string().array(),
-    difficulty: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]).optional(),
+    skip: z.number().default(0),
+    take: z.number().default(10),
     topic: z.string().optional(),
-    misspelledWords: z.array(z.string()).optional()
+    difficulty: z.number().optional()
 })

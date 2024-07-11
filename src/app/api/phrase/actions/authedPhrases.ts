@@ -9,8 +9,9 @@ import { generateAndSaveSentence } from "../phrase.generators";
 import phraseRepo from "../repositories/phrase.repo";
 import { userRepo } from "../../user/user.repo";
 
-export async function authedGetPhrases({ skip = 0, take = 10, topic }: { skip: number, take: number, topic?: string, difficulty?: number }) {
+export async function authedGetPhrases({ skip = 0, take = 10, topic, difficulty }: { skip: number, take: number, topic?: string, difficulty?: number }) {
   try {
+    console.log(skip, take, topic, difficulty)
     const session = await getServerAuthSession()
     if (!session) throw new Error("Oops")
     const userId = session?.user.id
@@ -94,7 +95,7 @@ type BadWordsPerformance = {
   userId: string;
 }[]
 
-type ReturnSentence = ({
+export type ReturnSentence = ({
   userAttemptingPhrase?: {
     performance: {
       encounters: number;
@@ -118,7 +119,7 @@ type WordWithPerformance = Word & {
     correctEncounters: number;
   } | null
 }
-async function recommendSentences(user: User) {
+export async function recommendSentences(user: User) {
   // TODO: account for difficulties and topics 
   // TODO: refactor the code to return simple Type (note nested objects)
   const difficultAttempts: BadWordsPerformance = await getDifficultAttempts(user.id);
