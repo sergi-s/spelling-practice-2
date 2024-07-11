@@ -1,16 +1,14 @@
 "use server"
 import WordNet from 'wordnet';
 import natural, { type Stemmer } from "natural";
+import path from 'path';
 
 const stemmer = natural.PorterStemmer
 
 const initializeWordNet = async () => {
-    const wordNetPath = "./node_modules/wordnet/db";
-    
-    // if (env.NODE_ENV === "production") {
-    //     wordNetPath = "/var/task/node_modules/wordnet/db";
-    // }
-    await WordNet.init(wordNetPath);
+    const wordnetPath = path.join(__dirname, 'node_modules', 'wordnet', 'db');
+    await WordNet.init(wordnetPath);
+
 };
 void initializeWordNet();
 export const lookupWord = async (word: string): Promise<string | undefined> => {
