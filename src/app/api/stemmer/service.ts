@@ -3,15 +3,21 @@ import WordNet from 'wordnet';
 import natural, { type Stemmer } from "natural";
 import path from 'path';
 import wordnetdb from 'wordnet-db';
+import { existsSync } from 'fs';
 
 const stemmer = natural.PorterStemmer
 
 const initializeWordNet = async () => {
-    const wordnetPath = path.join(wordnetdb.path);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    console.log("=================================")
-    console.log("Path wordNet Database, ", wordnetdb.path)
-    console.log("=================================")
+    const customWordnetPath = path.join(wordnetdb.path);
+    const defaultWordnetPath = path.join(process.cwd(), 'node_modules', 'wordnet', 'db');
+
+    let wordnetPath;
+
+    if (existsSync(customWordnetPath)) {
+        wordnetPath = customWordnetPath;
+    } else {
+        wordnetPath = defaultWordnetPath;
+    }
     await WordNet.init(wordnetPath);
 
 };
