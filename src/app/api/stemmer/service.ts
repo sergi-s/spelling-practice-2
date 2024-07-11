@@ -1,4 +1,3 @@
-"use server"
 import WordNet from 'wordnet';
 import natural, { type Stemmer } from "natural";
 import path from 'path';
@@ -8,17 +7,10 @@ import { existsSync } from 'fs';
 const stemmer = natural.PorterStemmer
 
 const initializeWordNet = async () => {
-    const customWordnetPath = path.join(wordnetdb.path);
-    const defaultWordnetPath = path.join(process.cwd(), 'node_modules', 'wordnet', 'db');
-
-    let wordnetPath;
-
-    if (existsSync(customWordnetPath)) {
-        wordnetPath = customWordnetPath;
-    } else {
-        wordnetPath = defaultWordnetPath;
-    }
-    await WordNet.init(wordnetPath);
+    const customWordNetPath = path.join(wordnetdb.path);
+    const defaultWordNetPath = path.join(process.cwd(), 'node_modules', 'wordnet', 'db');
+    const wordNetPath = existsSync(customWordNetPath) ? customWordNetPath : defaultWordNetPath;
+    await WordNet.init(wordNetPath);
 
 };
 void initializeWordNet();
