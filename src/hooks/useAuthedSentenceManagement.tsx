@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { type Phrase } from '@prisma/client';
 import { type TopicOption } from 'types/types';
-import { authedGetPhrases, recordUserPerformance, type ReturnSentence } from '~/app/api/phrase/actions/authedPhrases';
+import { recordUserPerformance, type ReturnSentence } from '~/app/api/phrase/actions/authedPhrases';
 import { useSession } from 'next-auth/react';
 
 const useAuthedSentenceManagement = ({ selectedTopic }: { selectedTopic?: TopicOption }) => {
@@ -22,8 +22,8 @@ const useAuthedSentenceManagement = ({ selectedTopic }: { selectedTopic?: TopicO
 
             const userId = userData?.user.id
             if (!userId) return
-            const data = await authedGetPhrases({ topic: selectedTopic?.value, skip, take, userId });
-            // const data = await fetchPracticeSentences({ skip: 0, take: 0, difficulty: 0 })
+            // const data = await authedGetPhrases({ topic: selectedTopic?.value, skip, take, userId });
+            const data = await fetchPracticeSentences({ skip: 0, take: 0, difficulty: 0, userId })
             setSentence((prev) => [...prev, ...data]);
         } catch (error) {
             console.error('Error fetching sentences:', error);
@@ -70,7 +70,7 @@ const useAuthedSentenceManagement = ({ selectedTopic }: { selectedTopic?: TopicO
 
 export default useAuthedSentenceManagement;
 
-async function fetchPracticeSentences(data: { skip?: number, take?: number, difficulty?: number, topic?: string }) {
+async function fetchPracticeSentences(data: { skip?: number, take?: number, difficulty?: number, topic?: string, userId: string }) {
     try {
         const response = await fetch('/api/phrase', {
             method: 'POST',

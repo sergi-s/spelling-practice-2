@@ -1,6 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { schema } from './phrase.validation';
-import { getServerAuthSession } from '~/server/auth';
 import { userRepo } from '../user/user.repo';
 import { recommendSentences } from './actions/authedPhrases';
 
@@ -11,10 +10,12 @@ export const POST = async (
     try {
         const body = await req.json() as unknown;
         const response = schema.safeParse(body);
+        if(!response.success) throw new Error("oops")
+        const userId = response.data.userId 
         // currently we dont do anything with the data form the frontend
-        const session = await getServerAuthSession()
-        if (!session) throw new Error("Oops")
-        const userId = session?.user.id
+        // const session = await getServerAuthSession()
+        // if (!session) throw new Error("Oops")
+        // const userId = session?.user.id
         const user = await userRepo.getById(userId)
         if (!user) throw new Error("Oops")
 
