@@ -1,7 +1,9 @@
-import Link from "next/link"
-import { getServerAuthSession } from "~/server/auth"
-export const Nav = async () => {
-    const session = await getServerAuthSession()
+"use client"
+import { signOut, useSession } from "next-auth/react"
+export const Nav = () => {
+    const { status, data } = useSession()
+    const user = data?.user
+    const loggedIn = status === "authenticated"
 
     return (
         <header className="fixed top-0 left-0 right-0 z-10"
@@ -19,16 +21,22 @@ export const Nav = async () => {
             <nav className="w-full max-w-screen-xl mx-auto flex justify-between items-center">
                 <div>LexIA</div>
                 <div>
-                    <Link
-                        href={session ? "/api/auth/signout?callbackUrl=/" : "/api/auth/signin"}
-                        className="px-4 py-2 rounded hover:bg-opacity-80 transition-colors"
-                        style={{
-                            backgroundColor: session ? 'rgba(255, 82, 82, 0.8)' : 'rgba(82, 132, 255, 0.8)', // Redish for signout, bluish for signin
-                            cursor: 'pointer',
-                        }}
-                    >
-                        {session ? 'Sign Out' : 'Log In'}
-                    </Link>
+                    {loggedIn ? (
+                        <>
+                            <li>Welcome, {user!.name}</li>
+                            <li>
+                                <a onClick={async () => { await signOut({ redirect: false }); }} style={{ cursor: 'pointer' }}>
+                                    Sign out
+                                </a>
+                            </li>
+                        </>
+
+                    ) : (
+                        <li>
+                            <a href="/api/auth/signin">Sign in</a>
+                        </li>
+
+                    )}
                 </div>
             </nav>
         </header>
