@@ -3,6 +3,7 @@ import CreatableSelect from 'react-select/creatable';
 import { type TopicOption } from 'types/types';
 import useTopicsSelect from '../../hooks/useTopicsSelect';
 import { useSession } from 'next-auth/react';
+import type { CSSObject } from 'styled-components';
 
 export const TopicsSelect = ({ onOptionChange }: { onOptionChange: (selectedValue: TopicOption) => void; }) => {
 
@@ -29,9 +30,11 @@ export const TopicsSelect = ({ onOptionChange }: { onOptionChange: (selectedValu
     };
 
     const customStyles = {
-        menu: (provided: unknown[]) => ({ ...provided, zIndex: 9999 }),
-        menuList: (provided: unknown[]) => ({ ...provided, maxHeight: '400px' })
-    };
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        menu: (provided: CSSObject) => ({ ...provided, zIndex: 9999 }),
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        menuList: (provided: CSSObject) => ({ ...provided, maxHeight: '400px' })
+    }
 
     if (isLoading) {
         return <div>Loading...</div>;
@@ -50,7 +53,7 @@ export const TopicsSelect = ({ onOptionChange }: { onOptionChange: (selectedValu
                 onCreateOption={handleSelectCreate}
                 placeholder="Search and select or create a topic..."
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                //@ts-ignore
+                // @ts-ignore
                 styles={customStyles}
             />
             {selectedOption && <div>You selected: {selectedOption.label}</div>}
