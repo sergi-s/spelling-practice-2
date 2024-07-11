@@ -3,6 +3,7 @@ import { type Phrase } from '@prisma/client';
 import { type TopicOption } from 'types/types';
 import { recordUserPerformance, type ReturnSentence } from '~/app/api/phrase/actions/authedPhrases';
 import { useSession } from 'next-auth/react';
+import { getFreePhrases } from '~/app/api/phrase/actions/freePhrases';
 
 const useAuthedSentenceManagement = ({ selectedTopic }: { selectedTopic?: TopicOption }) => {
     const { data: userData } = useSession()
@@ -22,8 +23,9 @@ const useAuthedSentenceManagement = ({ selectedTopic }: { selectedTopic?: TopicO
 
             const userId = userData?.user.id
             if (!userId) return
+            const data = await getFreePhrases({ topic: selectedTopic?.value, skip, take })
             // const data = await authedGetPhrases({ topic: selectedTopic?.value, skip, take, userId });
-            const data = await fetchPracticeSentences({ skip: 0, take: 0, difficulty: 0, userId })
+            // const data = await fetchPracticeSentences({ skip: 0, take: 0, difficulty: 0, userId })
             setSentence((prev) => [...prev, ...data]);
         } catch (error) {
             console.error('Error fetching sentences:', error);
