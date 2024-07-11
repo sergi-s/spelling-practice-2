@@ -9,7 +9,9 @@ const stemmer = natural.PorterStemmer
 const initializeWordNet = async () => {
     const wordnetPath = path.join(process.cwd(), 'node_modules', 'wordnet', 'db');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    console.log(wordnetdb.path)
+    console.log("=================================")
+    console.log("Path wordNet Database, ", wordnetdb.path)
+    console.log("=================================")
     await WordNet.init(wordnetPath);
 
 };
