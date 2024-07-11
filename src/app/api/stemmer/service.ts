@@ -6,7 +6,7 @@ import path from 'path';
 const stemmer = natural.PorterStemmer
 
 const initializeWordNet = async () => {
-    const wordnetPath = path.join(__dirname, 'node_modules', 'wordnet', 'db');
+    const wordnetPath = path.join(process.cwd(), 'node_modules', 'wordnet', 'db');
     await WordNet.init(wordnetPath);
 
 };
