@@ -20,7 +20,9 @@ const useAuthedSentenceManagement = ({ selectedTopic }: { selectedTopic?: TopicO
         console.log(`Fetching more from ${skip} to ${skip + take}`);
         try {
 
-            const data = await authedGetPhrases({ topic: selectedTopic?.value, skip, take, userId: userData?.user.id });
+            const userId = userData?.user.id
+            if (!userId) return
+            const data = await authedGetPhrases({ topic: selectedTopic?.value, skip, take, userId });
             // const data = await fetchPracticeSentences({ skip: 0, take: 0, difficulty: 0 })
             setSentence((prev) => [...prev, ...data]);
         } catch (error) {
