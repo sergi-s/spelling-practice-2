@@ -9,12 +9,9 @@ import { generateAndSaveSentence } from "../phrase.generators";
 import phraseRepo from "../repositories/phrase.repo";
 import { userRepo } from "../../user/user.repo";
 
-export async function authedGetPhrases({ skip = 0, take = 10, topic, difficulty }: { skip: number, take: number, topic?: string, difficulty?: number }) {
+export async function authedGetPhrases({ skip = 0, take = 10, topic, difficulty, userId }: { skip: number, take: number, topic?: string, difficulty?: number, userId: string }) {
   try {
-    console.log(skip, take, topic, difficulty)
-    const session = await getServerAuthSession()
-    if (!session) throw new Error("Oops")
-    const userId = session?.user.id
+    if (!userId) throw new Error("Oops")
     const user = await userRepo.getById(userId)
     if (!user) throw new Error("Oops")
 

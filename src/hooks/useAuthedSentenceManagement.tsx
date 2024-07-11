@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { type Phrase } from '@prisma/client';
 import { type TopicOption } from 'types/types';
-import { recordUserPerformance, type ReturnSentence } from '~/app/api/phrase/actions/authedPhrases';
+import { authedGetPhrases, recordUserPerformance, type ReturnSentence } from '~/app/api/phrase/actions/authedPhrases';
+import { useSession } from 'next-auth/react';
 
 const useAuthedSentenceManagement = ({ selectedTopic }: { selectedTopic?: TopicOption }) => {
+    const { data: userData } = useSession()
     const [sentences, setSentence] = useState<Phrase[]>([]);
     const currentSentenceRef = useRef<string>()
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -17,8 +19,9 @@ const useAuthedSentenceManagement = ({ selectedTopic }: { selectedTopic?: TopicO
     const fetchSentences = useCallback(async () => {
         console.log(`Fetching more from ${skip} to ${skip + take}`);
         try {
-            // const data = await authedGetPhrases({ topic: selectedTopic?.value, skip, take });
-            const data = await fetchPracticeSentences({ skip: 0, take: 0, difficulty: 0 })
+
+            const data = await authedGetPhrases({ topic: selectedTopic?.value, skip, take, userId: userData?.user.id });
+            // const data = await fetchPracticeSentences({ skip: 0, take: 0, difficulty: 0 })
             setSentence((prev) => [...prev, ...data]);
         } catch (error) {
             console.error('Error fetching sentences:', error);
@@ -79,7 +82,7 @@ async function fetchPracticeSentences(data: { skip?: number, take?: number, diff
             throw new Error(`Error: ${response.statusText}`);
         }
 
-        return await response.json() as unknown as ReturnSentence[] ?? [];
+        return await response.json() as unknown as ReturnSentence[];
     } catch (error) {
         console.error('Error fetching practice sentences:', error);
         return [];
