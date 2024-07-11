@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { schema } from './phrase.validation';
 import { userRepo } from '../user/user.repo';
-import { recommendSentences } from './actions/authedPhrases';
+import { recommendSentences } from './services/authedPhrase.service';
 
 
 export const POST = async (
