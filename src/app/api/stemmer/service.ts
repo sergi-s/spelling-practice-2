@@ -1,26 +1,35 @@
-import WordNet from 'wordnet';
+// import WordNet from 'wordnet';
 import natural, { type Stemmer } from "natural";
 import path from 'path';
 import wordnetdb from 'wordnet-db';
 import { existsSync } from 'fs';
 
+import WordNet from "node-wordnet"
 const stemmer = natural.PorterStemmer
 
 const initializeWordNet = async () => {
     const customWordNetPath = path.join(wordnetdb.path);
     const defaultWordNetPath = path.join(process.cwd(), 'node_modules', 'wordnet', 'db');
     const wordNetPath = existsSync(customWordNetPath) ? customWordNetPath : defaultWordNetPath;
-    await WordNet.init(wordNetPath);
+    // await WordNet.init(wordNetPath);
 
 };
 void initializeWordNet();
 export const lookupWord = async (word: string): Promise<string | undefined> => {
+    console.log("===========================================================================")
     try {
-        const definitions = await WordNet.lookup(word.toLowerCase());
+        console.log("I AM LOOKING UP WORDs")
+        const wordnet = new WordNet()
+        const definitions = await wordnet.lookupAsync(word.toLowerCase())
+        // const definitions = await WordNet.lookup(word.toLowerCase());
         return definitions && definitions.length > 0 ? word : undefined;
     } catch (error) {
-        // console.error("Error looking up the word:", error);
+        console.error("Error looking up the word:", error);
         return undefined;
+    }
+    finally{
+        console.log("I COMPLETED MY LOOKING UP")
+        console.log("===========================================================================")
     }
 };
 
