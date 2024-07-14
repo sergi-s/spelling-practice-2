@@ -6,7 +6,7 @@ import { SentenceStrategy, TopicSentenceStrategy, WordSentenceStrategy } from ".
 import { extractAndConvertNumbers } from "~/app/utils/NLP/number-to-word";
 import { tokenize } from "~/app/utils/NLP/tokenizer";
 import { saveGeneratedPhrase } from "../services/phrase.service";
-import { Topic } from "@prisma/client";
+import { type Topic } from "@prisma/client";
 
 
 // TODO: new difficulty implementation

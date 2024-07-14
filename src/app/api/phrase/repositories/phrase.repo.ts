@@ -1,4 +1,4 @@
-import { Phrase } from "@prisma/client";
+import { type Phrase } from "@prisma/client";
 import { prisma } from "../../globalVariables";
 import { type Difficulty } from "../phrase.generators/interfaces";
 

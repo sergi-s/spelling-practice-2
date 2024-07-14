@@ -36,7 +36,7 @@ const AuthedSpelling = () => {
     return (
         <div className={styles.freePageContainer}>
 
-            {status == "authenticated" ? `user info:${JSON.stringify(userInfo)}` : ''}
+            {/* {status == "authenticated" ? `user info:${JSON.stringify(userInfo)}` : ''} */}
             <h2 className="col-span-2 mb-6 mt-6 text-center text-6xl font-bold bg-gradient-to-r from-cyan-500 to-blue-500 drop-shadow-lg text-transparent bg-clip-text">
                 LexIA {selectedOption?.value}
             </h2>
