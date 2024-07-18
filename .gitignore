@@ -53,4 +53,4 @@ env/
 
 notes.txt
 
-node_modules
+nextjs/.next/
