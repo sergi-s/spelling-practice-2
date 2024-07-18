@@ -1,0 +1,133 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
+}
+
+model Session {
+    id           String   @id @default(auto()) @map("_id") @db.ObjectId
+    sessionToken String   @unique
+    userId       String   @db.ObjectId
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Necessary for Next auth
+model Account {
+    id                String  @id @default(auto()) @map("_id") @db.ObjectId
+    type              String
+    userId            String  @unique @db.ObjectId
+    provider          String
+    providerAccountId String
+    refresh_token     String?
+    access_token      String?
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String?
+    session_state     String?
+    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+}
+
+model User {
+    id                   String                 @id @default(auto()) @map("_id") @db.ObjectId
+    name                 String?
+    role                 String?
+    email                String?                @unique
+    emailVerified        DateTime?
+    image                String?
+    eloRating            Int                    @default(100)
+    sessions             Session[]
+    userWords            UserAttemptingWord[]
+    Account              Account?
+    userAttemptingPhrase UserAttemptingPhrase[]
+}
+
+model VerificationToken {
+    id         String   @id @default(auto()) @map("_id") @db.ObjectId
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
+}
+
+model StemmedWord {
+    id    String @id @default(auto()) @map("_id") @db.ObjectId
+    stem  String @unique
+    words Word[]
+}
+
+model Word {
+    id            String               @id @default(auto()) @map("_id") @db.ObjectId
+    word          String               @unique
+    stemmedWordId String?              @db.ObjectId
+    stemmedWord   StemmedWord?         @relation(fields: [stemmedWordId], references: [id])
+    createdAt     DateTime             @default(now())
+    updatedAt     DateTime             @updatedAt
+    phraseIDs     String[]             @db.ObjectId
+    categories    Phrase[]             @relation(fields: [phraseIDs], references: [id])
+    userWords     UserAttemptingWord[]
+    performance   PerformanceMetrics?
+}
+
+model Phrase {
+    id                   String                 @id @default(auto()) @map("_id") @db.ObjectId
+    phrase               String
+    createdAt            DateTime               @default(now())
+    updatedAt            DateTime               @updatedAt
+    wordIDs              String[]               @db.ObjectId
+    words                Word[]                 @relation(fields: [wordIDs], references: [id])
+    difficulty           Difficulty
+    topicId              String?                @db.ObjectId
+    topic                Topic?                 @relation(fields: [topicId], references: [id])
+    userAttemptingPhrase UserAttemptingPhrase[]
+}
+
+type Difficulty {
+    score          Float
+    frequencyScore Float
+    lengthScore    Float
+    syllableScore  Float
+}
+
+model UserAttemptingWord {
+    id          String             @id @default(auto()) @map("_id") @db.ObjectId
+    wordId      String             @db.ObjectId
+    word        Word               @relation(fields: [wordId], references: [id])
+    userId      String             @db.ObjectId
+    user        User               @relation(fields: [userId], references: [id])
+    performance PerformanceMetrics
+
+    @@unique([wordId, userId])
+}
+
+model UserAttemptingPhrase {
+    id          String             @id @default(auto()) @map("_id") @db.ObjectId
+    sentenceId  String             @db.ObjectId
+    sentence    Phrase             @relation(fields: [sentenceId], references: [id])
+    userId      String             @db.ObjectId
+    user        User               @relation(fields: [userId], references: [id])
+    performance PerformanceMetrics
+
+    @@unique([userId, sentenceId])
+}
+
+model Topic {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    topic     String   @unique
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    phrases Phrase[]
+}
+
+type PerformanceMetrics {
+    encounters        Int @default(0)
+    correctEncounters Int @default(0)
+}

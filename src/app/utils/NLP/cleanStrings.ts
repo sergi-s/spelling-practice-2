@@ -1,1 +1,0 @@
-export const cleanString = (s: string) => s.replace(/[^a-zA-Z\s]/g, " ").toLowerCase().trim()

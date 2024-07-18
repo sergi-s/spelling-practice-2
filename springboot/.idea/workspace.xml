@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="37e49e5a-42bf-4353-80b3-ca31c5278a34" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../download_wmt14.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../next.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../postcss.config.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../prettier.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../prisma/schema.prisma" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/favicon.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/favicon1.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/frequency/frequencyDocument.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/FreeSpelling/index.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/auth/[...nextauth]/route.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/globalVariables.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/phrase/actions/authedPhrases.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/phrase/actions/freePhrases.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/phrase/phrase.generators/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/phrase/phrase.generators/interfaces.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/phrase/phrase.generators/route.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/phrase/phrase.generators/strategies/gemini.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/phrase/phrase.generators/strategies/gemma.2b.chat.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/phrase/phrase.generators/strategies/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/phrase/phrase.generators/strategies/openai.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/phrase/phrase.validation.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/phrase/repositories/phrase.repo.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/phrase/route.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/phrase/services/authedPhrase.service.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/phrase/services/phrase.service.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/stemmer/route.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/stemmer/service.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/stemmer/validation.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/topics/actions/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/topics/repositories/topicRepository.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/topics/route.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/user/actions/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/user/user.repo.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/userPhraseAttempt/userPhraseAttempt.repo.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/userWordAttempt/userWordAttempt.repo.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/api/word/repositories/word.repo.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/components/BlurToggleComponent.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/components/IconButton.module.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/components/IconButton.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/components/Nav.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/components/Sentence.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/components/SessionProvider.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/components/ShortcutInstructions.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/components/SpeakButton.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/components/SpellChecker.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/components/TopicsSelect.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/components/backgroundGradient.module.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/components/textInputBox.module.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/components/useKeyboardShortcuts.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/layout.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/spelling/BlurToggleComponent.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/spelling/DifficultySelect.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/spelling/LoggedInSpelling.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/spelling/SpellingComparison.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/spelling/index.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/utils/NLP/calculateDifficulty.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/utils/NLP/cleanStrings.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/utils/NLP/createFrequencyDocument.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/utils/NLP/number-to-word.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/utils/NLP/tfidf.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/utils/NLP/tokenizeCorpus.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/utils/NLP/tokenizer.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/utils/logger.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/utils/outputs.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/utils/random/chooseRandomElement.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/app/utils/random/randomLong.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/env.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/hooks/useAuthedSentenceManagement.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/hooks/useSentenceAPI.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/hooks/useSentenceManagement.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/hooks/useTopicsSelect.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/scripts/FrequencyDocumentGen.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/scripts/downloadBrownCorps.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/server/auth.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/server/db.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/styles/globals.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tailwind.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tsconfig.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../types/node-wordNet.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../types/react-speech-kit.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../types/types.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../types/wordnet.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../yarn.lock" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5
+}]]></component>
+  <component name="ProjectId" id="2jQtINuYg7ZGcS9ES7wWqTKxns8" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "angluar__and__springboot",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/sergi/Public/spelling-practice-2/springboot",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.18034.62" />
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.18034.62" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="37e49e5a-42bf-4353-80b3-ca31c5278a34" name="Changes" comment="" />
+      <created>1721331047913</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1721331047913</updated>
+      <workItem from="1721331049016" duration="168000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
